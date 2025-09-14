@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Abstract AI and code background",
+      "imageUrl": "https://picsum.photos/seed/hero/1200/800",
+      "imageHint": "abstract code"
+    },
+    {
+      "id": "feature-ai-generation",
+      "description": "Robot arm building with blocks",
+      "imageUrl": "https://picsum.photos/seed/feature1/600/400",
+      "imageHint": "robot arm"
+    },
+    {
+      "id": "feature-multi-backend",
+      "description": "Server racks",
+      "imageUrl": "https://picsum.photos/seed/feature2/600/400",
+      "imageHint": "server rack"
+    },
+    {
+      "id": "feature-customizable",
+      "description": "Person customizing a user interface on a screen",
+      "imageUrl": "https://picsum.photos/seed/feature3/600/400",
+      "imageHint": "ui design"
+    },
+    {
+      "id": "about-us-team",
+      "description": "A diverse team collaborating in a modern office",
+      "imageUrl": "https://picsum.photos/seed/about/1200/800",
+      "imageHint": "team collaboration"
+    },
+    {
+      "id": "pricing-plan",
+      "description": "Abstract image representing growth for pricing page",
+      "imageUrl": "https://picsum.photos/seed/pricing/600/400",
+      "imageHint": "abstract growth"
+    }
+  ]
 }
