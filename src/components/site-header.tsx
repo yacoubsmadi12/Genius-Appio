@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { Globe, Menu, UserCircle } from "lucide-react";
 
 import { MainNav } from "@/components/main-nav";
@@ -12,18 +15,27 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "./ui/sheet";
 
 export function SiteHeader() {
-  const routes = [
-    { href: "/", label: "Home" },
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Simulate user being logged in
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  const mainNavRoutes = [
     { href: "/dashboard", label: "Dashboard" },
     { href: "/pricing", label: "Pricing" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact Us" },
   ];
 
-  const isLoggedIn = true; // This should be replaced with actual auth state
+  const sheetRoutes = [
+    { href: "/", label: "Home" },
+    ...mainNavRoutes,
+  ];
+
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -61,7 +73,7 @@ export function SiteHeader() {
                     <Link href="/account">Account</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
           ) : (
@@ -83,19 +95,38 @@ export function SiteHeader() {
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-6 text-lg font-medium mt-8">
-                <Logo />
-                {routes.map((route) => (
-                  <Link key={route.href} href={route.href} className="text-muted-foreground transition-colors hover:text-foreground">
-                    {route.label}
-                  </Link>
+                <SheetClose asChild>
+                    <Logo />
+                </SheetClose>
+                {sheetRoutes.map((route) => (
+                  <SheetClose asChild key={route.href}>
+                    <Link href={route.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                      {route.label}
+                    </Link>
+                  </SheetClose>
                 ))}
-                 <div className="flex flex-col space-y-2 pt-4">
-                    <Button asChild variant="outline">
-                      <Link href="/login">Login</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href="/signup">Sign Up</Link>
-                    </Button>
+                 <div className="flex flex-col space-y-2 pt-4 border-t">
+                    {isLoggedIn ? (
+                      <>
+                        <SheetClose asChild>
+                          <Link href="/account" className="text-muted-foreground transition-colors hover:text-foreground">Account</Link>
+                        </SheetClose>
+                        <Button onClick={handleLogout} variant="outline">Logout</Button>
+                      </>
+                    ) : (
+                      <>
+                        <SheetClose asChild>
+                            <Button asChild variant="outline">
+                            <Link href="/login">Login</Link>
+                            </Button>
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <Button asChild>
+                            <Link href="/signup">Sign Up</Link>
+                            </Button>
+                        </SheetClose>
+                      </>
+                    )}
                   </div>
               </nav>
             </SheetContent>
