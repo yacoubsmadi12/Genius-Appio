@@ -25,7 +25,6 @@ export function SiteHeader() {
   };
 
   const mainNavRoutes = [
-    { href: "/dashboard", label: "Dashboard" },
     { href: "/pricing", label: "Pricing" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact Us" },
@@ -108,6 +107,9 @@ export function SiteHeader() {
                  <div className="flex flex-col space-y-2 pt-4 border-t">
                     {isLoggedIn ? (
                       <>
+                        <SheetClose asChild>
+                          <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">Dashboard</Link>
+                        </SheetClose>
                         <SheetClose asChild>
                           <Link href="/account" className="text-muted-foreground transition-colors hover:text-foreground">Account</Link>
                         </SheetClose>
