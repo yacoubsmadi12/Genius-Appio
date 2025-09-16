@@ -163,6 +163,25 @@ export default function ContactPage() {
               </div>
             </CardContent>
           </Card>
+          
+          <Card>
+            <CardHeader>
+                <CardTitle className="font-headline text-2xl">Our Location</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="w-full h-64 rounded-lg overflow-hidden shadow-md">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3387.269876367173!2d35.86014641516025!3d31.959202981227798!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151ca08a5f6e06ef%3A0x3df0f5f3d7c1c6e0!2z2KfZhNiz2YrYp9i32Kkg2KfZhNi52YXYp9iqINin2YTYudmE2YbYr9in2Kog2YHZhtiv2YrZhtmK2Kkg2KfZhNmF2YjZh9mI2KfYqiDYp9mE2YXZhNmK2YbZitix!5e0!3m2!1sen!2sjo!4v1694874388432!5m2!1sen!2sjo"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -191,5 +210,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
-    
