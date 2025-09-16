@@ -43,15 +43,6 @@ const generateAppPrompt = ai.definePrompt({
   output: {schema: GenerateAppFromPromptOutputSchema},
   prompt: `You are an expert Flutter app generator. Your task is to take a user's prompt and generate a complete, structured, and functional Flutter project from it.
 
-  **Process:**
-
-  1.  **Parse the Prompt:** First, analyze the user's prompt and extract the core components into a structured JSON format. This should include:
-      *   \`appName\`: The name of the application.
-      *   \`screens\`: A list of the required screens/pages.
-      *   \`features\`: A list of key features (e.g., Authentication, ThemeSwitch, StoryGeneration).
-
-  2.  **Generate the File Structure:** Based on the parsed JSON, generate the complete file structure for a standard Flutter project.
-
   **User Prompt:**
   "{{{prompt}}}"
 
