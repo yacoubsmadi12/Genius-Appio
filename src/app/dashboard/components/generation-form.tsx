@@ -98,8 +98,8 @@ export function GenerationForm() {
     });
     try {
       const result = await generateAppFromPrompt({ prompt: values.appDescription });
-      console.log("App generation summary:", result.summary);
-      // Here you would trigger the long-running backend process
+      console.log("App generation result:", result);
+      // Here you would trigger the long-running backend process that uses the files
     } catch (error) {
        console.error("App generation failed:", error);
        toast({
