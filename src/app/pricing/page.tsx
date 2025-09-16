@@ -42,7 +42,6 @@ const plans = [
     period: '',
     description: 'For large organizations with custom needs.',
     features: [
-      'Unlimited App generations',
       'Custom component library',
       'On-premise deployment option',
       'Dedicated account manager',
