@@ -5,6 +5,7 @@ import { ArrowRight, Bot, Database, FileCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const features = [
   {
@@ -80,32 +81,40 @@ export default function Home() {
                 We combine cutting-edge AI with robust development practices to give you a head start on your next project.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature, index) => (
-                <Card key={index} className="flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl">
-                  {feature.image && (
-                    <div className="aspect-video overflow-hidden">
-                      <Image
-                        src={feature.image.imageUrl}
-                        alt={feature.image.description}
-                        width={600}
-                        height={400}
-                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={feature.image.imageHint}
-                      />
-                    </div>
-                  )}
-                  <CardHeader className="flex-row items-center gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full text-primary">
-                      {feature.icon}
-                    </div>
-                    <CardTitle className="font-headline text-xl">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="relative">
+              <Carousel className="w-full max-w-4xl mx-auto">
+                <CarouselContent>
+                  {features.map((feature, index) => (
+                    <CarouselItem key={index}>
+                      <Card className="flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl">
+                        {feature.image && (
+                          <div className="aspect-video overflow-hidden">
+                            <Image
+                              src={feature.image.imageUrl}
+                              alt={feature.image.description}
+                              width={600}
+                              height={400}
+                              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                              data-ai-hint={feature.image.imageHint}
+                            />
+                          </div>
+                        )}
+                        <CardHeader className="flex-row items-center gap-4">
+                          <div className="bg-primary/10 p-3 rounded-full text-primary">
+                            {feature.icon}
+                          </div>
+                          <CardTitle className="font-headline text-xl">{feature.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-muted-foreground">{feature.description}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8" />
+                <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-8" />
+              </Carousel>
             </div>
           </div>
         </section>
