@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, MessageSquare, User, Linkedin } from "lucide-react";
+import { Mail, MessageSquare, User, Linkedin, Phone, MapPin } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -43,7 +43,6 @@ const TelegramIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-
 export default function ContactPage() {
   const { toast } = useToast();
 
@@ -66,100 +65,131 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-2xl py-12 px-4">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold font-headline">Contact Us</CardTitle>
-          <CardDescription>Have a question or feedback? We'd love to hear from you.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <FormControl>
-                        <Input placeholder="Your Name" {...field} className="pl-10" />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <FormControl>
-                        <Input type="email" placeholder="you@example.com" {...field} className="pl-10" />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <div className="relative">
-                      <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <FormControl>
-                        <Textarea placeholder="Tell us what's on your mind..." {...field} className="pl-10 min-h-[120px]" />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Sending..." : "Send Message"}
+    <div className="container mx-auto max-w-6xl py-12 px-4">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">Contact Us</h1>
+        <p className="mt-4 text-xl text-muted-foreground">Have a question or feedback? We'd love to hear from you.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-headline">Send us a Message</CardTitle>
+              <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <FormControl>
+                            <Input placeholder="Your Name" {...field} className="pl-10" />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <FormControl>
+                            <Input type="email" placeholder="you@example.com" {...field} className="pl-10" />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message</FormLabel>
+                        <div className="relative">
+                          <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <FormControl>
+                            <Textarea placeholder="Tell us what's on your mind..." {...field} className="pl-10 min-h-[120px]" />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Sending..." : "Send Message"}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="lg:col-span-1 space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl">Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-4">
+                <Mail className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold">Email</h3>
+                  <a href="mailto:Appio.Gen@gmail.com" className="text-muted-foreground text-sm hover:underline">
+                    Appio.Gen@gmail.com
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <Phone className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold">Phone</h3>
+                  <p className="text-muted-foreground text-sm">00962796734144</p>
+                  <p className="text-muted-foreground text-sm">00962790389987</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl">Connect With Us</CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center space-x-4 text-muted-foreground">
+              <Button variant="outline" size="icon" asChild>
+                <a href="https://wa.me/962796734144" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+                  <WhatsAppIcon className="h-5 w-5" />
+                </a>
               </Button>
-            </form>
-          </Form>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or connect with us
-              </span>
-            </div>
-          </div>
-
-          <div className="flex justify-center space-x-4 text-muted-foreground">
-            <Button variant="outline" size="icon" asChild>
-              <a href="https://wa.me/962796734144" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
-                <WhatsAppIcon className="h-5 w-5" />
-              </a>
-            </Button>
-            <Button variant="outline" size="icon" asChild>
-              <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Contact on Telegram">
-                <TelegramIcon className="h-5 w-5" />
-              </a>
-            </Button>
-            <Button variant="outline" size="icon" asChild>
-              <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Connect on LinkedIn">
-                <Linkedin className="h-5 w-5" />
-              </a>
-            </Button>
-          </div>
-
-        </CardContent>
-      </Card>
+              <Button variant="outline" size="icon" asChild>
+                <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Contact on Telegram">
+                  <TelegramIcon className="h-5 w-5" />
+                </a>
+              </Button>
+              <Button variant="outline" size="icon" asChild>
+                <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Connect on LinkedIn">
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
+
+    
