@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Bot, Database, FileCode, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,6 +58,16 @@ const testimonials = [
 ];
 
 export default function Home() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleDashboardClick = () => {
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      router.push('/login');
+    }
+  };
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -90,8 +102,8 @@ export default function Home() {
                       transition={{ duration: 1, repeat: Infinity, repeatType: "mirror" }}
                     />
                   </motion.div>
-                  <Button asChild size="lg" variant="outline" className="font-semibold">
-                    <Link href="/dashboard">Go to Dashboard</Link>
+                  <Button size="lg" variant="outline" className="font-semibold" onClick={handleDashboardClick}>
+                    Go to Dashboard
                   </Button>
                 </div>
               </div>
