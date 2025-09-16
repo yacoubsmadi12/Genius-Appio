@@ -1,18 +1,16 @@
 
-import Image from 'next/image';
+"use client";
+
 import Link from 'next/link';
 import { ArrowRight, Bot, Database, FileCode } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import {Particles} from '@/components/ui/particles';
+import { AnimatedCode } from '@/components/animated-code';
+import { Typewriter } from '@/components/typewriter';
 
 const features = [
   {
@@ -35,62 +33,53 @@ const features = [
   },
 ];
 
-const sliderImages = [
-  PlaceHolderImages.find(img => img.id === 'slider-1'),
-  PlaceHolderImages.find(img => img.id === 'slider-2'),
-  PlaceHolderImages.find(img => img.id === 'slider-3'),
-].filter(Boolean) as (typeof PlaceHolderImages[0])[];
-
 
 export default function Home() {
   
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        {/* Hero Section with Carousel Background */}
-        <section className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center text-center overflow-hidden">
-          <Carousel
-            opts={{ loop: true, duration: 50 }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <CarouselContent className="h-full">
-              {sliderImages.map((image, index) => (
-                <CarouselItem key={index} className="h-full relative">
-                  <Image
-                    src={image.imageUrl}
-                    alt={image.description}
-                    fill
-                    className="object-cover"
-                    priority={index === 0}
-                    data-ai-hint={image.imageHint}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-4 md:left-8 z-20 text-white bg-black/20 hover:bg-black/50 border-none" />
-            <CarouselNext className="absolute right-4 md:right-8 z-20 text-white bg-black/20 hover:bg-black/50 border-none" />
-          </Carousel>
-
-          <div className="container px-4 md:px-6 relative z-10 text-white">
-              <div className="max-w-3xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+        {/* Hero Section */}
+        <section className="relative w-full h-screen flex flex-col items-center justify-center text-center overflow-hidden">
+          <Particles className="absolute inset-0 -z-10" />
+          
+          <div className="container px-4 md:px-6 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div className="text-left">
                 <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
-                  Build Your Dream App with the Power of AI
+                  <Typewriter text="Build Your Dream App with the Power of AI" />
                 </h1>
-                <p className="mt-4 md:mt-6 text-lg md:text-xl text-neutral-200">
-                  Welcome to <span className="font-semibold text-white">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
+                <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground">
+                  Welcome to <span className="font-semibold text-foreground">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
                 </p>
-                <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild size="lg" className="font-semibold">
-                    <Link href="/signup">
-                      Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="font-semibold bg-transparent text-white border-white hover:bg-white hover:text-black">
+                <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative"
+                  >
+                    <Button asChild size="lg" className="font-semibold relative z-10">
+                      <Link href="/signup">
+                        Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
+                      </Link>
+                    </Button>
+                    <motion.div 
+                      className="absolute inset-0 bg-primary rounded-lg blur-lg opacity-75 animate-pulse -z-10"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.75 }}
+                      transition={{ duration: 1, repeat: Infinity, repeatType: "mirror" }}
+                    />
+                  </motion.div>
+                  <Button asChild size="lg" variant="outline" className="font-semibold">
                     <Link href="/dashboard">Go to Dashboard</Link>
                   </Button>
                 </div>
               </div>
+              <div className="hidden lg:block">
+                <AnimatedCode />
+              </div>
             </div>
+          </div>
         </section>
 
         {/* Features Section */}
@@ -107,7 +96,7 @@ export default function Home() {
                 <Card key={feature.title} className="group flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl">
                   {feature.image && (
                     <div className="aspect-video overflow-hidden">
-                       <Image
+                       <img
                         src={feature.image.imageUrl}
                         alt={feature.image.description}
                         width={600}
