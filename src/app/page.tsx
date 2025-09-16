@@ -2,13 +2,14 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Bot, Database, FileCode } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import {ParticlesComponent as Particles} from '@/components/ui/particles';
+import {ParticlesComponent} from '@/components/ui/particles';
 import { AnimatedCode } from '@/components/animated-code';
 import { Typewriter } from '@/components/typewriter';
 
@@ -41,7 +42,7 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative w-full h-screen flex flex-col items-center justify-center text-center overflow-hidden">
-          <Particles className="absolute inset-0 -z-10" />
+          <ParticlesComponent className="absolute inset-0 -z-10" />
           
           <div className="container px-4 md:px-6 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -96,7 +97,7 @@ export default function Home() {
                 <Card key={feature.title} className="group flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl">
                   {feature.image && (
                     <div className="aspect-video overflow-hidden">
-                       <img
+                       <Image
                         src={feature.image.imageUrl}
                         alt={feature.image.description}
                         width={600}
