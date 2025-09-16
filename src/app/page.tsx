@@ -5,6 +5,13 @@ import { ArrowRight, Bot, Database, FileCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const features = [
   {
@@ -26,6 +33,12 @@ const features = [
     image: PlaceHolderImages.find(img => img.id === 'feature-customizable'),
   },
 ];
+
+const sliderImages = [
+  PlaceHolderImages.find(img => img.id === 'slider-1'),
+  PlaceHolderImages.find(img => img.id === 'slider-2'),
+  PlaceHolderImages.find(img => img.id === 'slider-3'),
+]
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-image');
@@ -71,8 +84,44 @@ export default function Home() {
           </div>
         </section>
 
+        {/* New Carousel Section */}
+        <section className="w-full pb-16 md:pb-24 bg-background">
+          <div className="container px-4 md:px-6">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full max-w-4xl mx-auto"
+            >
+              <CarouselContent>
+                {sliderImages.map((image, index) => image && (
+                  <CarouselItem key={index}>
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-video items-center justify-center p-0 overflow-hidden rounded-lg">
+                           <Image
+                              src={image.imageUrl}
+                              alt={image.description}
+                              width={1200}
+                              height={675}
+                              className="object-cover w-full h-full"
+                              data-ai-hint={image.imageHint}
+                            />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+        </section>
+
         {/* Features Section */}
-        <section id="features" className="w-full py-16 md:py-24 bg-background">
+        <section id="features" className="w-full py-16 md:py-24 bg-secondary/10">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Why Choose Genius APPio?</h2>
