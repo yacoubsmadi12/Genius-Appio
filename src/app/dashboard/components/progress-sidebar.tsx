@@ -60,6 +60,18 @@ export function ProgressSidebar() {
     setIsComplete(false);
   };
 
+  const handleDownload = () => {
+    const element = document.createElement("a");
+    const file = new Blob(["This is a placeholder for your generated project ZIP."], {
+      type: "application/zip",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = "GeniusAPPio-Project.zip";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    document.body.removeChild(element);
+  };
+
   const getIcon = (status: StepStatus) => {
     switch (status) {
       case "completed":
@@ -109,10 +121,10 @@ export function ProgressSidebar() {
       {isComplete && (
         <CardFooter className="flex flex-col gap-4">
           <p className="text-sm text-green-600 font-medium">Generation Complete!</p>
-          <Button className="w-full">
+          <Button className="w-full" onClick={handleDownload}>
             <FileArchive className="mr-2 h-4 w-4" /> Download Project ZIP
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={handleDownload}>
             Download APK (Optional)
           </Button>
         </CardFooter>
