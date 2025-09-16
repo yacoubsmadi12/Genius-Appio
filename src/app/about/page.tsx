@@ -1,7 +1,26 @@
+
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Target, Rocket } from 'lucide-react';
+
+const teamMembers = [
+  {
+    name: 'Eng Yacoub.Smadi',
+    role: 'CEO & Founder',
+    imageUrl: 'https://i.postimg.cc/cC5wq2B5/Whats-App-Image-2025-03-15-at-12-06-31-AM.jpg',
+  },
+  {
+    name: 'Eng Mohammad.AL-Rawashdah',
+    role: 'CTO',
+    imageUrl: 'https://i.postimg.cc/mrGMGQ7R/Whats-App-Image-2025-09-12-at-19-03-04.jpg',
+  },
+  {
+    name: 'Eng Rabie Otoum',
+    role: 'AI Lab Lead',
+    imageUrl: 'https://i.postimg.cc/s29WfvJW/Whats-App-Image-2025-09-12-at-19-21-04.jpg',
+  },
+];
 
 export default function AboutPage() {
   const aboutImage = PlaceHolderImages.find(img => img.id === 'about-us-team');
@@ -53,6 +72,30 @@ export default function AboutPage() {
           <p className="mt-2 text-muted-foreground">We are a passionate team of engineers, designers, and AI researchers dedicated to pushing the boundaries of what's possible in app development.</p>
         </div>
       </div>
+      
+      <div className="mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Meet Our Team</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {teamMembers.map((member) => (
+            <Card key={member.name} className="text-center overflow-hidden">
+              <div className="relative h-64 w-full">
+                <Image 
+                  src={member.imageUrl} 
+                  alt={`Photo of ${member.name}`}
+                  fill
+                  className="object-cover object-top"
+                />
+              </div>
+              <CardHeader>
+                <CardTitle className="font-headline text-xl">{member.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-primary font-semibold">{member.role}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
 
       <Card>
         <CardContent className="p-8">
@@ -67,3 +110,4 @@ export default function AboutPage() {
     </div>
   );
 }
+
