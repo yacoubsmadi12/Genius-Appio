@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Bot, Database, FileCode } from 'lucide-react';
+import { ArrowRight, Bot, Database, FileCode, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AnimatedCode } from '@/components/animated-code';
 import { Typewriter } from '@/components/typewriter';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const features = [
   {
@@ -33,6 +34,26 @@ const features = [
   },
 ];
 
+const testimonials = [
+  {
+    name: 'Sarah L.',
+    role: 'Indie Developer',
+    avatarUrl: 'https://picsum.photos/seed/sarah/100/100',
+    testimonial: 'Genius APPio is a game-changer! I went from a simple idea to a functional app prototype in a single afternoon. The generated code is surprisingly clean and easy to customize.'
+  },
+  {
+    name: 'Mike R.',
+    role: 'Startup Founder',
+    avatarUrl: 'https://picsum.photos/seed/mike/100/100',
+    testimonial: 'As a non-technical founder, this tool allowed me to validate my app idea without hiring an expensive development team. The multi-backend support is a fantastic feature.'
+  },
+  {
+    name: 'Javier C.',
+    role: 'UX Designer',
+    avatarUrl: 'https://picsum.photos/seed/javier/100/100',
+    testimonial: "I love how I can quickly generate a base app and then focus on what I do best: refining the user experience. It's an essential part of my workflow now."
+  }
+];
 
 export default function Home() {
   
@@ -114,6 +135,42 @@ export default function Home() {
                   <CardContent>
                     <p className="text-muted-foreground">{feature.description}</p>
                   </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className="w-full py-16 md:py-24">
+          <div className="container px-4 md:px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">What Our Clients Say</h2>
+              <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
+                Discover why developers and founders love building with Genius APPio.
+              </p>
+            </div>
+            <div className="grid gap-8 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <Card key={testimonial.name} className="flex flex-col justify-between bg-card/50">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                        ))}
+                    </div>
+                    <p className="text-muted-foreground italic">"{testimonial.testimonial}"</p>
+                  </CardContent>
+                  <CardHeader className="flex-row items-center gap-4 p-6 pt-0">
+                    <Avatar>
+                      <AvatarImage src={testimonial.avatarUrl} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-base font-semibold">{testimonial.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </CardHeader>
                 </Card>
               ))}
             </div>
