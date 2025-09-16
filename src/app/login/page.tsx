@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Mail, Lock } from "lucide-react";
+import { ParticlesComponent } from "@/components/ui/particles";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -57,84 +58,85 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center">
-      <Card className="mx-auto max-w-sm w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl font-headline">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <div className="relative">
-                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <FormControl>
-                        <Input placeholder="you@example.com" {...field} className="pl-10"/>
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center">
-                      <FormLabel>Password</FormLabel>
-                      <Link
-                        href="/forgot-password"
-                        className="ml-auto inline-block text-sm underline text-primary"
-                      >
-                        Forgot your password?
-                      </Link>
-                    </div>
-                    <div className="relative">
-                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <FormControl>
-                        <Input type="password" placeholder="••••••••" {...field} className="pl-10"/>
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-          </Form>
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+    <div className="relative w-full h-[calc(100vh-4rem)] flex items-center justify-center">
+        <ParticlesComponent className="absolute inset-0 -z-10" />
+        <Card className="mx-auto max-w-sm w-full">
+            <CardHeader>
+            <CardTitle className="text-2xl font-headline">Login</CardTitle>
+            <CardDescription>
+                Enter your email below to login to your account
+            </CardDescription>
+            </CardHeader>
+            <CardContent>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <FormControl>
+                            <Input placeholder="you@example.com" {...field} className="pl-10"/>
+                        </FormControl>
+                        </div>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                    <FormItem>
+                        <div className="flex items-center">
+                        <FormLabel>Password</FormLabel>
+                        <Link
+                            href="/forgot-password"
+                            className="ml-auto inline-block text-sm underline text-primary"
+                        >
+                            Forgot your password?
+                        </Link>
+                        </div>
+                        <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <FormControl>
+                            <Input type="password" placeholder="••••••••" {...field} className="pl-10"/>
+                        </FormControl>
+                        </div>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Logging in..." : "Login"}
+                </Button>
+                </form>
+            </Form>
+            <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                </span>
+                </div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
+            <Button variant="outline" className="w-full">
+                <GoogleIcon />
+                Login with Google
+            </Button>
+            <div className="mt-4 text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <Link href="/signup" className="underline text-primary">
+                Sign up
+                </Link>
             </div>
-          </div>
-          <Button variant="outline" className="w-full">
-            <GoogleIcon />
-            Login with Google
-          </Button>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="underline text-primary">
-              Sign up
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+        </Card>
     </div>
   );
 }
