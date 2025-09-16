@@ -102,42 +102,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section id="testimonials" className="w-full py-16 md:py-24">
-          <div className="container px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold font-headline">What Our Clients Say</h2>
-              <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-                Discover why developers and founders love building with Genius APPio.
-              </p>
-            </div>
-            <div className="grid gap-8 md:grid-cols-3">
-              {testimonials.map((testimonial) => (
-                <Card key={testimonial.name} className="flex flex-col justify-between bg-card/50">
-                  <CardContent className="p-6">
-                    <div className="flex items-center mb-4">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                        ))}
-                    </div>
-                    <p className="text-muted-foreground italic">"{testimonial.testimonial}"</p>
-                  </CardContent>
-                  <CardHeader className="flex-row items-center gap-4 p-6 pt-0">
-                    <Avatar>
-                      <AvatarImage src={testimonial.avatarUrl} alt={testimonial.name} />
-                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-base font-semibold">{testimonial.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                    </div>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Features Section */}
         <section id="features" className="w-full py-16 md:py-24 bg-card/50">
           <div className="container px-4 md:px-6">
@@ -171,6 +135,42 @@ export default function Home() {
                   <CardContent>
                     <p className="text-muted-foreground">{feature.description}</p>
                   </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className="w-full py-16 md:py-24">
+          <div className="container px-4 md:px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">What Our Clients Say</h2>
+              <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
+                Discover why developers and founders love building with Genius APPio.
+              </p>
+            </div>
+            <div className="grid gap-8 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <Card key={testimonial.name} className="flex flex-col justify-between bg-card/50">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                        ))}
+                    </div>
+                    <p className="text-muted-foreground italic">"{testimonial.testimonial}"</p>
+                  </CardContent>
+                  <CardHeader className="flex-row items-center gap-4 p-6 pt-0">
+                    <Avatar>
+                      <AvatarImage src={testimonial.avatarUrl} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-base font-semibold">{testimonial.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </CardHeader>
                 </Card>
               ))}
             </div>
