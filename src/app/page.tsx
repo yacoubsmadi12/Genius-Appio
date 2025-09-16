@@ -52,7 +52,7 @@ export default function Home() {
             opts={{ loop: true }}
             className="absolute inset-0 w-full h-full"
           >
-            <CarouselContent className="h-full">
+            <CarouselContent style={{ height: "100%" }}>
               {sliderImages.map((image, index) => (
                 <CarouselItem key={index} className="h-full">
                   <Image
