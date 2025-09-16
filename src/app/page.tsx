@@ -38,37 +38,46 @@ const sliderImages = [
   PlaceHolderImages.find(img => img.id === 'slider-1'),
   PlaceHolderImages.find(img => img.id === 'slider-2'),
   PlaceHolderImages.find(img => img.id === 'slider-3'),
-]
+].filter(Boolean) as (typeof PlaceHolderImages[0])[];
+
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-image');
   
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative w-full pt-20 md:pt-32 pb-16 md:pb-24 overflow-hidden">
-          <div className="absolute inset-0 bg-secondary/50">
-            {heroImage && (
-              <Image
-                src={heroImage.imageUrl}
-                alt={heroImage.description}
-                fill
-                className="object-cover opacity-20"
-                priority
-                data-ai-hint={heroImage.imageHint}
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-          </div>
-          <div className="container px-4 md:px-6 relative text-center">
+        {/* Hero Section with Carousel Background */}
+        <section className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center text-center overflow-hidden">
+           <Carousel
+            opts={{ loop: true }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <CarouselContent className="h-full">
+              {sliderImages.map((image, index) => (
+                <CarouselItem key={index} className="h-full">
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.description}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                    data-ai-hint={image.imageHint}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="absolute inset-0 bg-black/50" />
+            <CarouselPrevious className="absolute left-4 md:left-8 text-white" />
+            <CarouselNext className="absolute right-4 md:right-8 text-white" />
+          </Carousel>
+
+          <div className="container px-4 md:px-6 relative z-10 text-white">
             <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight text-foreground">
+              <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
                 Build Your Dream App with the Power of AI
               </h1>
-              <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground">
-                Welcome to <span className="font-semibold text-primary">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
+              <p className="mt-4 md:mt-6 text-lg md:text-xl text-neutral-200">
+                Welcome to <span className="font-semibold text-white">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
               </p>
               <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="font-semibold">
@@ -76,47 +85,11 @@ export default function Home() {
                     Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="font-semibold">
+                <Button asChild size="lg" variant="outline" className="font-semibold bg-transparent text-white border-white hover:bg-white hover:text-black">
                   <Link href="/dashboard">Go to Dashboard</Link>
                 </Button>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* New Carousel Section */}
-        <section className="w-full pb-16 md:pb-24 bg-background">
-          <div className="container px-4 md:px-6">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full max-w-6xl mx-auto"
-            >
-              <CarouselContent>
-                {sliderImages.map((image, index) => image && (
-                  <CarouselItem key={index}>
-                    <div className="p-1">
-                      <Card>
-                        <CardContent className="flex aspect-video items-center justify-center p-0 overflow-hidden rounded-lg">
-                           <Image
-                              src={image.imageUrl}
-                              alt={image.description}
-                              width={1200}
-                              height={675}
-                              className="object-cover w-full h-full"
-                              data-ai-hint={image.imageHint}
-                            />
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
           </div>
         </section>
 
