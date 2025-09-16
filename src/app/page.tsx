@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import {ParticlesComponent} from '@/components/ui/particles';
 import { AnimatedCode } from '@/components/animated-code';
 import { Typewriter } from '@/components/typewriter';
 
@@ -42,7 +41,6 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative w-full h-screen flex flex-col items-center justify-center text-center overflow-hidden">
-          <ParticlesComponent className="absolute inset-0 -z-10" />
           
           <div className="container px-4 md:px-6 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -84,7 +82,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="w-full py-16 md:py-24 bg-secondary/10">
+        <section id="features" className="w-full py-16 md:py-24 bg-card/50">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Why Choose Genius APPio?</h2>
@@ -94,7 +92,7 @@ export default function Home() {
             </div>
             <div className="grid gap-8 md:grid-cols-3">
               {features.map((feature) => (
-                <Card key={feature.title} className="group flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl">
+                <Card key={feature.title} className="group flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl bg-background/80 backdrop-blur-sm">
                   {feature.image && (
                     <div className="aspect-video overflow-hidden">
                        <Image
@@ -123,7 +121,7 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="w-full py-16 md:py-24 bg-secondary/50">
+        <section className="w-full py-16 md:py-24 bg-card/50">
           <div className="container px-4 md:px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Forge Your App?</h2>
             <p className="mt-3 text-muted-foreground max-w-xl mx-auto">

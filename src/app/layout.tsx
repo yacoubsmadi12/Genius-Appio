@@ -7,6 +7,7 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
+import { ParticlesComponent } from '@/components/ui/particles';
 
 export const metadata: Metadata = {
   title: 'Genius APPio - Build AI-Powered Apps',
@@ -33,6 +34,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
+            <ParticlesComponent className="fixed inset-0 -z-10" />
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
               <main className="flex-1">{children}</main>

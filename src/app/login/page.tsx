@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Mail, Lock } from "lucide-react";
-import { ParticlesComponent } from "@/components/ui/particles";
 import { Logo } from "@/components/logo";
 
 const formSchema = z.object({
@@ -80,9 +79,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
-        <ParticlesComponent className="absolute inset-0 -z-10" />
-        <Card className="mx-auto max-w-sm w-full">
+    <div className="w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+        <Card className="mx-auto max-w-sm w-full bg-card/80 backdrop-blur-sm">
             <CardHeader className="items-center text-center">
               <Logo />
               <CardTitle className="text-2xl font-headline pt-4">Login</CardTitle>
@@ -143,7 +141,7 @@ export default function LoginPage() {
                 <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-card/80 px-2 text-muted-foreground">
                     Or continue with
                 </span>
                 </div>
