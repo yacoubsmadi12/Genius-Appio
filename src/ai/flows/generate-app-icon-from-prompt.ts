@@ -29,15 +29,6 @@ export async function generateAppIcon(input: GenerateAppIconInput): Promise<Gene
   return generateAppIconFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateAppIconPrompt',
-  input: {schema: GenerateAppIconInputSchema},
-  output: {schema: GenerateAppIconOutputSchema},
-  prompt: `You are an AI that generates app icons based on the app name and description.\n\nApp Name: {{{appName}}}\nApp Description: {{{appDescription}}}\n\nGenerate a visually appealing and relevant icon that represents the app. Return the icon as a data URI.
-\nOutput the icon data URI:
-`,
-});
-
 const generateAppIconFlow = ai.defineFlow(
   {
     name: 'generateAppIconFlow',
@@ -45,13 +36,20 @@ const generateAppIconFlow = ai.defineFlow(
     outputSchema: GenerateAppIconOutputSchema,
   },
   async input => {
-    const {media} = await ai.generate({
-      model: 'googleai/imagen-4.0-fast-generate-001',
-      prompt: `Generate an app icon for an app named ${input.appName} with description ${input.appDescription}`,
-    });
-    if (!media) {
-      throw new Error('No media returned from image generation.');
-    }
-    return {iconDataUri: media.url};
+    // Placeholder SVG icon to avoid Imagen API billing error.
+    const placeholderIcon = `
+    <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="128" height="128" rx="28" fill="hsl(88, 39%, 48%)"/>
+      <path d="M50.4863 33.3429L32 45.9143V71.0572L50.4863 83.6286L68.9726 71.0572V45.9143L50.4863 33.3429Z" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M50.5143 83.6571L50.4857 95" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M69 71.0571L78.2286 64.9143" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M32 71.0571L22.7714 64.9143" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M68.9726 45.9143L88.4588 33.3429L97.6874 39.4857" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    `.trim();
+    
+    const iconDataUri = `data:image/svg+xml;base64,${btoa(placeholderIcon)}`;
+    
+    return { iconDataUri: iconDataUri };
   }
 );
