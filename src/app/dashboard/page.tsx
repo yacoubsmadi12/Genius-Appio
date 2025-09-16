@@ -1,7 +1,16 @@
+
+"use client";
+
+import { useState } from "react";
 import { GenerationForm } from "./components/generation-form";
 import { ProgressSidebar } from "./components/progress-sidebar";
+import type { GenerateAppFromPromptOutput } from "@/ai/flows";
+
 
 export default function DashboardPage() {
+  const [generationResult, setGenerationResult] = useState<GenerateAppFromPromptOutput | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="text-center mb-12">
@@ -14,10 +23,20 @@ export default function DashboardPage() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
         <div className="lg:col-span-2">
-          <GenerationForm />
+          <GenerationForm 
+            onGenerationStart={() => setIsGenerating(true)}
+            onGenerationComplete={setGenerationResult} 
+          />
         </div>
         <div className="lg:col-span-1">
-          <ProgressSidebar />
+          <ProgressSidebar 
+            isGenerating={isGenerating}
+            generationResult={generationResult}
+            onReset={() => {
+              setIsGenerating(false);
+              setGenerationResult(null);
+            }}
+          />
         </div>
       </div>
     </div>

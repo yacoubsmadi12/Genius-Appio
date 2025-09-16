@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { generateAppIcon, generateAppFromPrompt } from "@/ai/flows/index";
+import { generateAppIcon, generateAppFromPrompt, GenerateAppFromPromptOutput } from "@/ai/flows/index";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -42,7 +43,13 @@ const formSchema = z.object({
   }),
 });
 
-export function GenerationForm() {
+type GenerationFormProps = {
+  onGenerationStart: () => void;
+  onGenerationComplete: (result: GenerateAppFromPromptOutput) => void;
+};
+
+
+export function GenerationForm({ onGenerationStart, onGenerationComplete }: GenerationFormProps) {
   const { toast } = useToast();
   const [iconOption, setIconOption] = useState("generate");
   const [generatedIcon, setGeneratedIcon] = useState<string | null>(null);
@@ -92,14 +99,19 @@ export function GenerationForm() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    onGenerationStart();
     toast({
       title: "Generation Started!",
-      description: "Your app is being forged. Check the progress on the sidebar.",
+      description: "Your app is being forged. This might take a moment.",
     });
     try {
       const result = await generateAppFromPrompt({ prompt: values.appDescription });
       console.log("App generation result:", result);
-      // Here you would trigger the long-running backend process that uses the files
+      onGenerationComplete(result);
+      toast({
+        title: "Generation Complete!",
+        description: "Your app files are ready. Check the progress bar.",
+      });
     } catch (error) {
        console.error("App generation failed:", error);
        toast({
@@ -168,7 +180,7 @@ export function GenerationForm() {
                       type="button"
                       variant="outline"
                       onClick={handleGenerateIcon}
-                      disabled={isGeneratingIcon}
+                      disabled={isGeneratingIcon || form.formState.isSubmitting}
                     >
                       {isGeneratingIcon
                         ? "Generating..."
@@ -182,7 +194,7 @@ export function GenerationForm() {
                 <TabsContent value="upload" className="mt-4">
                   <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="picture">Picture</Label>
-                    <Input id="picture" type="file" />
+                    <Input id="picture" type="file" disabled={form.formState.isSubmitting}/>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -259,8 +271,8 @@ export function GenerationForm() {
               )}
             />
 
-            <Button type="submit" size="lg" className="w-full">
-              Generate App
+            <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Generating..." : "Generate App"}
             </Button>
           </form>
         </Form>
