@@ -47,13 +47,13 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section with Carousel Background */}
-        <section className="relative w-full h-[60vh] md:h-[80vh]">
-          <div className="absolute inset-0 flex items-center justify-center text-center overflow-hidden">
+        <section className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center text-center overflow-hidden">
+          <div className="absolute inset-0">
             <Carousel
-              opts={{ loop: true }}
-              className="absolute inset-0 w-full h-full"
+              opts={{ loop: true, duration: 50 }}
+              className="w-full h-full"
             >
-              <CarouselContent style={{ height: "100%" }}>
+              <CarouselContent className="h-full">
                 {sliderImages.map((image, index) => (
                   <CarouselItem key={index} className="h-full">
                     <Image
@@ -70,8 +70,9 @@ export default function Home() {
               <CarouselPrevious className="absolute left-4 md:left-8 z-20 text-white" />
               <CarouselNext className="absolute right-4 md:right-8 z-20 text-white" />
             </Carousel>
-
-            <div className="container px-4 md:px-6 relative z-10 text-white">
+          </div>
+          
+          <div className="container px-4 md:px-6 relative z-10 text-white">
               <div className="max-w-3xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                 <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
                   Build Your Dream App with the Power of AI
@@ -91,7 +92,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
         </section>
 
         {/* Features Section */}
