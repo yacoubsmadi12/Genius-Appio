@@ -1,9 +1,13 @@
+
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail, Lock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -35,24 +40,67 @@ const formSchema = z.object({
 
 
 export default function AccountPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "Current User", // Replace with actual user data
-      email: "user@example.com", // Replace with actual user data
+      name: "",
+      email: "",
       currentPassword: "",
       newPassword: "",
     },
   });
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+    if (user) {
+      form.reset({
+        name: user.displayName || "",
+        email: user.email || "",
+      });
+    }
+  }, [user, loading, router, form]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    // Here you would handle updating the user's profile and password in Firebase
     toast({
       title: "Account Updated",
       description: "Your account details have been successfully updated.",
     });
+  }
+
+  if (loading || !user) {
+    return (
+      <div className="container mx-auto max-w-2xl py-12 px-4">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </CardHeader>
+          <CardContent className="space-y-8">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+             <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+             <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <Skeleton className="h-10 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

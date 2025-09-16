@@ -1,8 +1,11 @@
+
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Globe, Menu, UserCircle } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -16,12 +19,28 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "./ui/sheet";
+import { Skeleton } from "./ui/skeleton";
 
 export function SiteHeader() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Simulate user being logged in
+  const { user, loading, signOut } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
+      router.push("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Logout Failed",
+        description: "Could not log you out. Please try again.",
+      });
+    }
   };
 
   const mainNavRoutes = [
@@ -34,6 +53,46 @@ export function SiteHeader() {
   const sheetRoutes = [
     ...mainNavRoutes,
   ];
+
+  const renderUserMenu = () => {
+    if (loading) {
+      return <Skeleton className="h-8 w-20" />;
+    }
+
+    if (user) {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="gap-2">
+              <UserCircle className="h-5 w-5" />
+              <span className="hidden md:inline">{user.displayName || "Account"}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard">Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/account">Account</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
+
+    return (
+      <div className="hidden items-center space-x-2 md:flex">
+        <Button asChild variant="ghost">
+          <Link href="/login">Login</Link>
+        </Button>
+        <Button asChild>
+          <Link href="/signup">Sign Up</Link>
+        </Button>
+      </div>
+    );
+  };
 
 
   return (
@@ -60,35 +119,9 @@ export function SiteHeader() {
           </DropdownMenu>
 
           <ThemeToggle />
-          {isLoggedIn ? (
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <UserCircle className="h-[1.2rem] w-[1.2rem]" />
-                    <span className="sr-only">User menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/account">Account</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-          ) : (
-            <div className="hidden items-center space-x-2 md:flex">
-              <Button asChild variant="ghost">
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
-            </div>
-          )}
+          
+          {renderUserMenu()}
+
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -109,7 +142,7 @@ export function SiteHeader() {
                   </SheetClose>
                 ))}
                  <div className="flex flex-col space-y-2 pt-4 border-t">
-                    {isLoggedIn ? (
+                    {user ? (
                       <>
                         <SheetClose asChild>
                           <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">Dashboard</Link>
