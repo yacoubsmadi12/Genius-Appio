@@ -70,7 +70,7 @@ export default function Home() {
             <CarouselNext className="absolute right-4 md:right-8 z-20 text-white" />
           </Carousel>
 
-          <div className="container px-4 md:px-6 relative z-20 text-white">
+          <div className="container px-4 md:px-6 relative z-10 text-white">
             <div className="max-w-3xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
               <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
                 Build Your Dream App with the Power of AI
