@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Bot, Database, FileCode } from 'lucide-react';
@@ -48,30 +49,28 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section with Carousel Background */}
         <section className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center text-center overflow-hidden">
-          <div className="absolute inset-0">
-            <Carousel
-              opts={{ loop: true, duration: 50 }}
-              className="w-full h-full"
-            >
-              <CarouselContent className="h-full">
-                {sliderImages.map((image, index) => (
-                  <CarouselItem key={index} className="h-full">
-                    <Image
-                      src={image.imageUrl}
-                      alt={image.description}
-                      fill
-                      className="object-cover"
-                      priority={index === 0}
-                      data-ai-hint={image.imageHint}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="absolute left-4 md:left-8 z-20 text-white" />
-              <CarouselNext className="absolute right-4 md:right-8 z-20 text-white" />
-            </Carousel>
-          </div>
-          
+          <Carousel
+            opts={{ loop: true, duration: 50 }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <CarouselContent className="h-full">
+              {sliderImages.map((image, index) => (
+                <CarouselItem key={index} className="h-full relative">
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.description}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                    data-ai-hint={image.imageHint}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-4 md:left-8 z-20 text-white bg-black/20 hover:bg-black/50 border-none" />
+            <CarouselNext className="absolute right-4 md:right-8 z-20 text-white bg-black/20 hover:bg-black/50 border-none" />
+          </Carousel>
+
           <div className="container px-4 md:px-6 relative z-10 text-white">
               <div className="max-w-3xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                 <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
