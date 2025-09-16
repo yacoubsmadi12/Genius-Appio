@@ -36,8 +36,7 @@ const formSchema = z.object({
   appName: z.string().min(3, "App name must be at least 3 characters."),
   appDescription: z
     .string()
-    .min(10, "Description must be at least 10 characters.")
-    .max(500, "Description must be less than 500 characters."),
+    .min(10, "Description must be at least 10 characters."),
   backend: z.enum(["firebase", "supabase", "nodejs"], {
     required_error: "You need to select a backend type.",
   }),
