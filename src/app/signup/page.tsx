@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { User, Mail, Lock } from "lucide-react";
+import { ParticlesComponent } from "@/components/ui/particles";
+import { Logo } from "@/components/logo";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -82,10 +84,12 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center py-12">
+    <div className="relative w-full h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+      <ParticlesComponent className="absolute inset-0 -z-10" />
       <Card className="mx-auto max-w-sm w-full">
-        <CardHeader>
-          <CardTitle className="text-xl font-headline">Sign Up</CardTitle>
+        <CardHeader className="items-center text-center">
+          <Logo />
+          <CardTitle className="text-2xl font-headline pt-4">Sign Up</CardTitle>
           <CardDescription>
             Enter your information to create an account
           </CardDescription>
