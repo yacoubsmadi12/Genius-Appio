@@ -46,10 +46,11 @@ const formSchema = z.object({
 type GenerationFormProps = {
   onGenerationStart: () => void;
   onGenerationComplete: (result: GenerateAppFromPromptOutput) => void;
+  isGenerating: boolean;
 };
 
 
-export function GenerationForm({ onGenerationStart, onGenerationComplete }: GenerationFormProps) {
+export function GenerationForm({ onGenerationStart, onGenerationComplete, isGenerating }: GenerationFormProps) {
   const { toast } = useToast();
   const [iconOption, setIconOption] = useState("generate");
   const [generatedIcon, setGeneratedIcon] = useState<string | null>(null);
@@ -105,12 +106,12 @@ export function GenerationForm({ onGenerationStart, onGenerationComplete }: Gene
       description: "Your app is being forged. This might take a moment.",
     });
     try {
-      const result = await generateAppFromPrompt({ prompt: values.appDescription });
+      const result = await generateAppFromPrompt({ prompt: `App Name: ${values.appName}. Backend: ${values.backend}. Description: ${values.appDescription}` });
       console.log("App generation result:", result);
       onGenerationComplete(result);
       toast({
         title: "Generation Complete!",
-        description: "Your app files are ready. Check the progress bar.",
+        description: "Your app files are ready. Check the progress sidebar.",
       });
     } catch (error) {
        console.error("App generation failed:", error);
@@ -119,6 +120,8 @@ export function GenerationForm({ onGenerationStart, onGenerationComplete }: Gene
         title: "App Generation Failed",
         description: "Could not start app generation. Please try again.",
       });
+       // Ensure we reset the generating state on failure
+       onGenerationComplete({ files: [] });
     }
   }
 
@@ -180,7 +183,7 @@ export function GenerationForm({ onGenerationStart, onGenerationComplete }: Gene
                       type="button"
                       variant="outline"
                       onClick={handleGenerateIcon}
-                      disabled={isGeneratingIcon || form.formState.isSubmitting}
+                      disabled={isGeneratingIcon || isGenerating}
                     >
                       {isGeneratingIcon
                         ? "Generating..."
@@ -194,7 +197,7 @@ export function GenerationForm({ onGenerationStart, onGenerationComplete }: Gene
                 <TabsContent value="upload" className="mt-4">
                   <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="picture">Picture</Label>
-                    <Input id="picture" type="file" disabled={form.formState.isSubmitting}/>
+                    <Input id="picture" type="file" disabled={isGenerating}/>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -271,8 +274,8 @@ export function GenerationForm({ onGenerationStart, onGenerationComplete }: Gene
               )}
             />
 
-            <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Generating..." : "Generate App"}
+            <Button type="submit" size="lg" className="w-full" disabled={isGenerating}>
+              {isGenerating ? "Generating..." : "Generate App"}
             </Button>
           </form>
         </Form>

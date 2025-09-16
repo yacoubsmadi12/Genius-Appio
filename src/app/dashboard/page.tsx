@@ -11,6 +11,21 @@ export default function DashboardPage() {
   const [generationResult, setGenerationResult] = useState<GenerateAppFromPromptOutput | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const handleGenerationComplete = (result: GenerateAppFromPromptOutput) => {
+    setGenerationResult(result);
+    setIsGenerating(false);
+  }
+
+  const handleGenerationStart = () => {
+    setIsGenerating(true);
+    setGenerationResult(null);
+  }
+
+  const handleReset = () => {
+    setIsGenerating(false);
+    setGenerationResult(null);
+  }
+
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="text-center mb-12">
@@ -24,18 +39,16 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
         <div className="lg:col-span-2">
           <GenerationForm 
-            onGenerationStart={() => setIsGenerating(true)}
-            onGenerationComplete={setGenerationResult} 
+            isGenerating={isGenerating}
+            onGenerationStart={handleGenerationStart}
+            onGenerationComplete={handleGenerationComplete} 
           />
         </div>
         <div className="lg:col-span-1">
           <ProgressSidebar 
             isGenerating={isGenerating}
             generationResult={generationResult}
-            onReset={() => {
-              setIsGenerating(false);
-              setGenerationResult(null);
-            }}
+            onReset={handleReset}
           />
         </div>
       </div>

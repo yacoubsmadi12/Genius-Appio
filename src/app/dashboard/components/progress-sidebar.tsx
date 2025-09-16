@@ -28,68 +28,39 @@ type ProgressSidebarProps = {
 
 export function ProgressSidebar({ isGenerating, generationResult, onReset }: ProgressSidebarProps) {
 
-  const [steps, setSteps] = useState<{ name: string; status: StepStatus }[]>([]);
-  const [isComplete, setIsComplete] = useState(false);
-
-  useEffect(() => {
-    if (isGenerating && !generationResult) {
-      setSteps([
-        { name: "Warming up the AI...", status: "in_progress" },
-        { name: "Generating code structure", status: "pending" },
-        { name: "Writing files", status: "pending" },
-        { name: "Packaging your project", status: "pending" },
-      ]);
-      setIsComplete(false);
-    } else if (generationResult) {
-      const finalSteps = [
-        { name: "AI generation complete", status: "completed" as StepStatus },
-        ...generationResult.files.map(file => ({
-          name: `Wrote ${file.path}`,
-          status: "completed" as StepStatus,
-        })),
-        { name: "Project packaged", status: "completed" as StepStatus },
-      ];
-      setSteps(finalSteps);
-      setIsComplete(true);
-    }
-  }, [isGenerating, generationResult]);
-
+  const [isZipping, setIsZipping] = useState(false);
 
   const handleDownload = async () => {
     if (!generationResult) return;
 
+    setIsZipping(true);
     const zip = new JSZip();
     generationResult.files.forEach(file => {
+      // Important: If the path contains folders, JSZip will create them.
       zip.file(file.path, file.content);
     });
 
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-    
-    const element = document.createElement("a");
-    element.href = URL.createObjectURL(zipBlob);
-    element.download = "GeniusAPPio-Project.zip";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  };
-
-  const getIcon = (status: StepStatus) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "in_progress":
-        return <Loader className="h-5 w-5 animate-spin text-primary" />;
-      case "pending":
-      default:
-        return <Circle className="h-5 w-5 text-muted-foreground" />;
+    try {
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      const element = document.createElement("a");
+      element.href = URL.createObjectURL(zipBlob);
+      element.download = "GeniusAPPio-Project.zip";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    } catch (error) {
+      console.error("Failed to create ZIP file", error);
+    } finally {
+      setIsZipping(false);
     }
   };
   
   const handleStartNew = () => {
     onReset();
-    setSteps([]);
-    setIsComplete(false);
   }
+
+  const isComplete = !isGenerating && generationResult !== null;
 
   return (
     <Card className="sticky top-24">
@@ -98,24 +69,27 @@ export function ProgressSidebar({ isGenerating, generationResult, onReset }: Pro
         <CardDescription>Your app's status will appear below.</CardDescription>
       </CardHeader>
       <CardContent className="min-h-[250px] flex items-center justify-center">
-        {!isGenerating && !isComplete ? (
+        {isGenerating ? (
+            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                <Loader className="h-12 w-12 mb-4 animate-spin" />
+                <p className="font-semibold">Warming up the AI...</p>
+                <p className="text-sm">Generating code structure and writing files.</p>
+            </div>
+        ) : !isComplete ? (
           <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
             <FileCode className="h-12 w-12 mb-4" />
             <p>Fill out the form and click "Generate App" to start.</p>
           </div>
         ) : (
-          <ul className="space-y-4 w-full">
-            {steps.map((step, index) => (
-              <li key={index} className="flex items-center gap-4">
-                {getIcon(step.status)}
+          <ul className="space-y-3 w-full h-64 overflow-y-auto pr-2">
+            {generationResult.files.map((file, index) => (
+              <li key={index} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
+                <FileCode className="h-5 w-5 text-primary flex-shrink-0" />
                 <span
-                  className={cn(
-                    "font-medium text-sm",
-                    step.status === "pending" && "text-muted-foreground",
-                    step.status === "completed" && "text-foreground"
-                  )}
+                  className="font-mono text-sm text-foreground truncate"
+                  title={file.path}
                 >
-                  {step.name}
+                  {file.path}
                 </span>
               </li>
             ))}
@@ -124,9 +98,22 @@ export function ProgressSidebar({ isGenerating, generationResult, onReset }: Pro
       </CardContent>
       {isComplete && (
         <CardFooter className="flex flex-col gap-4">
-          <p className="text-sm text-green-600 font-medium">Generation Complete!</p>
-          <Button className="w-full" onClick={handleDownload}>
-            <FileArchive className="mr-2 h-4 w-4" /> Download Project ZIP
+          <div className="flex items-center text-sm text-green-600 font-medium">
+             <CheckCircle className="mr-2 h-4 w-4" />
+            <span>Generation Complete!</span>
+          </div>
+          <Button className="w-full" onClick={handleDownload} disabled={isZipping}>
+            {isZipping ? (
+                <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Packaging...</span>
+                </>
+            ) : (
+                <>
+                    <FileArchive className="mr-2 h-4 w-4" /> 
+                    <span>Download Project ZIP</span>
+                </>
+            )}
           </Button>
           <Button variant="outline" className="w-full" onClick={handleStartNew}>
             Start New Project
