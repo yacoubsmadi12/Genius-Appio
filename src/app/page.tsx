@@ -47,46 +47,48 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section with Carousel Background */}
-        <section className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center text-center overflow-hidden">
-           <Carousel
-            opts={{ loop: true }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <CarouselContent style={{ height: "100%" }}>
-              {sliderImages.map((image, index) => (
-                <CarouselItem key={index} className="h-full">
-                  <Image
-                    src={image.imageUrl}
-                    alt={image.description}
-                    fill
-                    className="object-cover"
-                    priority={index === 0}
-                    data-ai-hint={image.imageHint}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-4 md:left-8 z-20 text-white" />
-            <CarouselNext className="absolute right-4 md:right-8 z-20 text-white" />
-          </Carousel>
+        <section className="relative w-full h-[60vh] md:h-[80vh]">
+          <div className="absolute inset-0 flex items-center justify-center text-center overflow-hidden">
+            <Carousel
+              opts={{ loop: true }}
+              className="absolute inset-0 w-full h-full"
+            >
+              <CarouselContent style={{ height: "100%" }}>
+                {sliderImages.map((image, index) => (
+                  <CarouselItem key={index} className="h-full">
+                    <Image
+                      src={image.imageUrl}
+                      alt={image.description}
+                      fill
+                      className="object-cover"
+                      priority={index === 0}
+                      data-ai-hint={image.imageHint}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-4 md:left-8 z-20 text-white" />
+              <CarouselNext className="absolute right-4 md:right-8 z-20 text-white" />
+            </Carousel>
 
-          <div className="container px-4 md:px-6 relative z-10 text-white">
-            <div className="max-w-3xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-              <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
-                Build Your Dream App with the Power of AI
-              </h1>
-              <p className="mt-4 md:mt-6 text-lg md:text-xl text-neutral-200">
-                Welcome to <span className="font-semibold text-white">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
-              </p>
-              <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="font-semibold">
-                  <Link href="/signup">
-                    Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="font-semibold bg-transparent text-white border-white hover:bg-white hover:text-black">
-                  <Link href="/dashboard">Go to Dashboard</Link>
-                </Button>
+            <div className="container px-4 md:px-6 relative z-10 text-white">
+              <div className="max-w-3xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight">
+                  Build Your Dream App with the Power of AI
+                </h1>
+                <p className="mt-4 md:mt-6 text-lg md:text-xl text-neutral-200">
+                  Welcome to <span className="font-semibold text-white">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
+                </p>
+                <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button asChild size="lg" className="font-semibold">
+                    <Link href="/signup">
+                      Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="font-semibold bg-transparent text-white border-white hover:bg-white hover:text-black">
+                    <Link href="/dashboard">Go to Dashboard</Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
