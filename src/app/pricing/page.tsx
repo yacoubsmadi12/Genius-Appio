@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
@@ -21,7 +22,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$29',
+    price: '$39.99',
     period: '/ month',
     description: 'For professionals and small teams.',
     features: [
