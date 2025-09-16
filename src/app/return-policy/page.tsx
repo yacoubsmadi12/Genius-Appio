@@ -13,7 +13,7 @@ export default function ReturnPolicyPage() {
           <ScrollArea className="h-96 w-full pr-4">
             <div className="space-y-6 text-muted-foreground">
               <p>
-                Thank you for subscribing to AppForge AI. We appreciate your business. Please read this policy carefully. This is the Return and Refund Policy of AppForge AI.
+                Thank you for subscribing to Genius APPio. We appreciate your business. Please read this policy carefully. This is the Return and Refund Policy of Genius APPio.
               </p>
 
               <div className="space-y-2">

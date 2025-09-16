@@ -9,7 +9,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto max-w-5xl py-12 px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl font-headline">About AppForge AI</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl font-headline">About Genius APPio</h1>
         <p className="mt-4 text-xl text-muted-foreground">
           We're on a mission to revolutionize app development with the power of artificial intelligence.
         </p>
@@ -56,11 +56,11 @@ export default function AboutPage() {
 
       <Card>
         <CardContent className="p-8">
-          <h3 className="text-3xl font-bold text-center font-headline mb-4">The Story Behind AppForge AI</h3>
+          <h3 className="text-3xl font-bold text-center font-headline mb-4">The Story Behind Genius APPio</h3>
           <p className="text-muted-foreground leading-relaxed">
-            AppForge AI was born from a simple observation: too many great ideas die before they ever become a reality because of the high barriers to software development. The time, cost, and technical expertise required can be prohibitive. We asked ourselves, "What if we could use the recent advancements in generative AI to bridge this gap?"
+            Genius APPio was born from a simple observation: too many great ideas die before they ever become a reality because of the high barriers to software development. The time, cost, and technical expertise required can be prohibitive. We asked ourselves, "What if we could use the recent advancements in generative AI to bridge this gap?"
             <br /><br />
-            Our journey began with a small team and a big idea. We spent countless hours training models, designing intuitive user experiences, and building a platform that is both powerful for professional developers and simple for beginners. Today, AppForge AI is the result of that dedication, offering a unique blend of AI-driven code generation, flexible backend options, and fully customizable outputs. We're just getting started, and we're excited to have you join us on this journey.
+            Our journey began with a small team and a big idea. We spent countless hours training models, designing intuitive user experiences, and building a platform that is both powerful for professional developers and simple for beginners. Today, Genius APPio is the result of that dedication, offering a unique blend of AI-driven code generation, flexible backend options, and fully customizable outputs. We're just getting started, and we're excited to have you join us on this journey.
           </p>
         </CardContent>
       </Card>

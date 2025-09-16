@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
           <ScrollArea className="h-96 w-full pr-4">
             <div className="space-y-6 text-muted-foreground">
               <p>
-                Welcome to AppForge AI. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
+                Welcome to Genius APPio. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
               </p>
 
               <div className="space-y-2">

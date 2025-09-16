@@ -7,7 +7,7 @@ import { SiteFooter } from '@/components/site-footer';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'AppForge AI - Build AI-Powered Apps',
+  title: 'Genius APPio - Build AI-Powered Apps',
   description: 'Generate AI-powered Android apps with our modern platform.',
 };
 

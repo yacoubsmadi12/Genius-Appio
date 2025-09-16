@@ -54,7 +54,7 @@ export default function TermsPage() {
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">6. Limitation of Liability</h3>
                 <p>
-                  In no event shall AppForge AI, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the service.
+                  In no event shall Genius APPio, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the service.
                 </p>
               </div>
             </div>

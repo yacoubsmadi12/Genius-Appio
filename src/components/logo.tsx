@@ -9,9 +9,9 @@ export function Logo() {
         <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-accent" />
       </div>
       <span className="hidden text-xl font-bold font-headline text-foreground sm:inline-block">
-        AppForge AI
+        Genius APPio
       </span>
-      <span className="sr-only">AppForge AI Home</span>
+      <span className="sr-only">Genius APPio Home</span>
     </Link>
   );
 }

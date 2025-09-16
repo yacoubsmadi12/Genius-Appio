@@ -55,7 +55,7 @@ export default function Home() {
                 Build Your Dream App with the Power of AI
               </h1>
               <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground">
-                Welcome to <span className="font-semibold text-primary">AppForge AI</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
+                Welcome to <span className="font-semibold text-primary">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
               </p>
               <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="font-semibold">
@@ -75,7 +75,7 @@ export default function Home() {
         <section id="features" className="w-full py-16 md:py-24 bg-background">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold font-headline">Why Choose AppForge AI?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">Why Choose Genius APPio?</h2>
               <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
                 We combine cutting-edge AI with robust development practices to give you a head start on your next project.
               </p>
@@ -115,7 +115,7 @@ export default function Home() {
           <div className="container px-4 md:px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Forge Your App?</h2>
             <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              Join thousands of developers and entrepreneurs building faster with AppForge AI.
+              Join thousands of developers and entrepreneurs building faster with Genius APPio.
             </p>
             <div className="mt-8">
               <Button asChild size="lg" className="font-semibold">
