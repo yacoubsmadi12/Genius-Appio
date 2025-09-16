@@ -83,7 +83,7 @@ export default function AboutPage() {
                   src={member.imageUrl} 
                   alt={`Photo of ${member.name}`}
                   fill
-                  className="object-cover object-top"
+                  className="object-contain"
                 />
               </div>
               <CardHeader>
@@ -110,4 +110,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
