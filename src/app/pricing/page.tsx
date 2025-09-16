@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
+import Link from 'next/link';
 
 const plans = [
   {
@@ -16,6 +17,7 @@ const plans = [
     ],
     cta: 'Get Started',
     isPopular: false,
+    href: '/signup',
   },
   {
     name: 'Pro',
@@ -23,14 +25,15 @@ const plans = [
     period: '/ month',
     description: 'For professionals and small teams.',
     features: [
-      '20 App generations per month',
+      '2 App generations per month',
       'Advanced components',
       'All backend options',
       'Priority email support',
-      'Downloadable APKs',
+      'Downloadable ZIP File Project',
     ],
     cta: 'Upgrade to Pro',
     isPopular: true,
+    href: 'https://www.paypal.com/ncp/payment/ZEA2UF7FWTUF8',
   },
   {
     name: 'Enterprise',
@@ -46,6 +49,7 @@ const plans = [
     ],
     cta: 'Contact Sales',
     isPopular: false,
+    href: '/contact',
   },
 ];
 
@@ -88,8 +92,8 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant={plan.isPopular ? 'default' : 'outline'}>
-                {plan.cta}
+              <Button className="w-full" variant={plan.isPopular ? 'default' : 'outline'} asChild>
+                <Link href={plan.href} target={plan.href.startsWith('http') ? '_blank' : undefined}>{plan.cta}</Link>
               </Button>
             </CardFooter>
           </Card>
