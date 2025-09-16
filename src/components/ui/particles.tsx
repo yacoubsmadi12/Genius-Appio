@@ -5,7 +5,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { type Container, type ISourceOptions } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
 
-export const Particles = ({
+export const ParticlesComponent = ({
   className,
   quantity = 100,
 }: {
@@ -91,5 +91,5 @@ export const Particles = ({
     return null;
   }
 
-  return <Particles className={className} options={options} />;
+  return <Particles className={className} id="tsparticles" options={options} />;
 };

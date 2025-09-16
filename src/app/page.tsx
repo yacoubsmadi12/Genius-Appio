@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import {Particles} from '@/components/ui/particles';
+import {ParticlesComponent as Particles} from '@/components/ui/particles';
 import { AnimatedCode } from '@/components/animated-code';
 import { Typewriter } from '@/components/typewriter';
 
