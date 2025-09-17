@@ -45,7 +45,8 @@ const nextConfig: NextConfig = {
   },
   // Allow all dev origins for Replit proxy system
   allowedDevOrigins: [
-    'https://d692d3fd-44cc-46fc-a3f1-fb5c04519740-00-g2efxgapcszu.worf.replit.dev',
+    'https://7fad8d7f-2067-46ee-bbb6-89b5a85ba721-00-3tegyjctlfjko.spock.replit.dev',
+    'https://*.spock.replit.dev',
     'https://*.worf.replit.dev',
     'https://*.riker.replit.dev',
     'https://*.replit.dev',
