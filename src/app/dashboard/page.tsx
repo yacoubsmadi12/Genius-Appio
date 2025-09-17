@@ -5,11 +5,12 @@ import { useState } from "react";
 import { GenerationForm } from "./components/generation-form";
 import { ProgressSidebar } from "./components/progress-sidebar";
 import { PlanningStep } from "./components/planning-step";
+import { FlutterCreateStep } from "./components/flutter-create-step";
 import { DatabaseStep } from "./components/database-step";
 import { IconStep } from "./components/icon-step";
 import type { GenerateAppFromPromptOutput } from "@/ai/flows";
 
-export type WorkflowStep = 'prompt' | 'planning' | 'database' | 'icon' | 'generating' | 'complete';
+export type WorkflowStep = 'prompt' | 'planning' | 'flutter-create' | 'database' | 'icon' | 'generating' | 'complete';
 
 export interface AppPlan {
   appName: string;
@@ -28,6 +29,10 @@ export default function DashboardPage() {
 
   const handlePlanningComplete = (plan: AppPlan) => {
     setAppPlan(plan);
+    setCurrentStep('flutter-create');
+  }
+
+  const handleFlutterCreateComplete = () => {
     setCurrentStep('database');
   }
 
@@ -77,11 +82,18 @@ export default function DashboardPage() {
               onBack={() => setCurrentStep('prompt')}
             />
           )}
+          {currentStep === 'flutter-create' && appPlan && (
+            <FlutterCreateStep 
+              appPlan={appPlan}
+              onComplete={handleFlutterCreateComplete}
+              onBack={() => setCurrentStep('planning')}
+            />
+          )}
           {currentStep === 'database' && appPlan && (
             <DatabaseStep 
               appPlan={appPlan}
               onComplete={handleDatabaseComplete}
-              onBack={() => setCurrentStep('planning')}
+              onBack={() => setCurrentStep('flutter-create')}
             />
           )}
           {currentStep === 'icon' && appPlan && (

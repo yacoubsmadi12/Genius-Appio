@@ -41,7 +41,9 @@ const generateAppPrompt = ai.definePrompt({
   name: 'generateAppPrompt',
   input: {schema: GenerateAppFromPromptInputSchema},
   output: {schema: GenerateAppFromPromptOutputSchema},
-  prompt: `You are an expert Flutter app generator. Your task is to take a user's prompt and generate a complete, structured, and functional Flutter project from it.
+  prompt: `You are an expert Flutter app generator. Your task is to generate modifications for a Flutter project that was created using 'flutter create project_name' command.
+
+  **IMPORTANT: This project was already initialized using 'flutter create' with Android embedding v2, so base Android/iOS structure exists.**
 
   **User Prompt:**
   "{{{prompt}}}"
@@ -49,17 +51,18 @@ const generateAppPrompt = ai.definePrompt({
   **Output Requirements:**
 
   *   The output MUST be a JSON object conforming to the output schema.
-  *   The \`files\` array should represent a complete Flutter project structure.
-  *   Provide content for all essential files, including:
-      *   \`pubspec.yaml\` (with necessary dependencies like cupertino_icons, and others if needed).
-      *   \`analysis_options.yaml\`
-      *   \`lib/main.dart\` (including theme data, and routes for all generated screens).
-      *   \`lib/screens/\` (a separate .dart file for each screen identified).
-      *   \`lib/widgets/\` (if any reusable widgets are created).
+  *   The \`files\` array should represent MODIFICATIONS to the base Flutter project structure created by 'flutter create'.
+  *   Generate content for files that need to be MODIFIED or ADDED, including:
+      *   \`pubspec.yaml\` (modify dependencies and app details as needed).
+      *   \`lib/main.dart\` (modify with theme data, and routes for all generated screens).
+      *   \`lib/screens/\` (create new .dart files for each screen identified).
+      *   \`lib/widgets/\` (if any reusable widgets are needed).
       *   \`lib/services/\` (if any services like authentication are needed).
-      *   \`README.md\` (a basic readme).
-      *   Placeholder files (\`.gitkeep\`) for empty directories like \`assets\`, \`android\`, \`ios\`, \`web\`, \`test\`.
+      *   \`lib/models/\` (if any data models are needed).
+      *   \`assets/\` folder contents if needed.
+      *   \`README.md\` (update with app-specific information).
   
+  *   DO NOT include basic Android/iOS configuration files as they're already created by 'flutter create' with Android embedding v2.
   *   The generated Dart code should be clean, correct, and use modern Flutter practices.
   *   The package name in all Dart files should be derived from the app name (e.g., 'ai_story_gen'). Replace spaces with underscores.
   `,

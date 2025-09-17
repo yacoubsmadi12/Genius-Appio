@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight } from "lucide-react";
+import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { generateAppFromPrompt } from "@/ai/flows";
@@ -155,6 +155,7 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
         <CardTitle className="font-headline text-2xl">
           {currentStep === 'prompt' && '📝 App Description'}
           {currentStep === 'planning' && '🤖 Analysis & Planning'}
+          {currentStep === 'flutter-create' && '🛠️ Flutter Project Setup'}
           {currentStep === 'database' && '🗄️ Database'}
           {currentStep === 'icon' && '🎨 App Icon'}
           {currentStep === 'generating' && '⚡ Generating Project'}
@@ -170,6 +171,35 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
             <Bot className="h-16 w-16 mb-4 text-primary" />
             <p className="text-lg font-semibold mb-2">Start your app creation journey</p>
             <p className="text-sm">Write a detailed description of the app you want</p>
+          </div>
+        )}
+
+        {currentStep === 'flutter-create' && appPlan && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-lg">
+              <h3 className="font-semibold text-center mb-2">🛠️ Flutter Project Creation</h3>
+              <p className="text-sm text-center text-muted-foreground mb-3">
+                Creating base Flutter project with modern Android embedding v2
+              </p>
+            </div>
+            <div className="border rounded-lg p-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Terminal className="h-5 w-5 text-green-600" />
+                  <div>
+                    <div className="font-semibold text-sm">Flutter Create</div>
+                    <div className="text-xs text-muted-foreground">Initialize project structure</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <div>
+                    <div className="font-semibold text-sm">Android Embedding v2</div>
+                    <div className="text-xs text-muted-foreground">Modern Android configuration</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
