@@ -11,24 +11,46 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot } from "lucide-react";
+import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { generateAppFromPrompt } from "@/ai/flows";
 import type { GenerateAppFromPromptOutput } from "@/ai/flows";
-
-
-type StepStatus = "pending" | "in_progress" | "completed";
+import type { WorkflowStep, AppPlan } from "../page";
 
 type ProgressSidebarProps = {
+  currentStep: WorkflowStep;
+  appPlan: AppPlan | null;
   isGenerating: boolean;
   generationResult: GenerateAppFromPromptOutput | null;
   onReset: () => void;
+  onGenerationComplete: (result: GenerateAppFromPromptOutput) => void;
 };
 
 
-export function ProgressSidebar({ isGenerating, generationResult, onReset }: ProgressSidebarProps) {
-
+export function ProgressSidebar({ currentStep, appPlan, isGenerating, generationResult, onReset, onGenerationComplete }: ProgressSidebarProps) {
   const [isZipping, setIsZipping] = useState(false);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['lib']));
+
+  // بدء التوليد عند الوصول لمرحلة التوليد
+  useEffect(() => {
+    if (currentStep === 'generating' && appPlan && !generationResult) {
+      handleGeneration();
+    }
+  }, [currentStep, appPlan]);
+
+  const handleGeneration = async () => {
+    if (!appPlan) return;
+    
+    try {
+      const prompt = `App Name: ${appPlan.appName}. Backend: ${appPlan.backend}. Description: ${appPlan.description}. Pages: ${appPlan.pages.join(', ')}. Features: ${appPlan.features.join(', ')}. Colors: ${appPlan.colors.join(', ')}.`;
+      const result = await generateAppFromPrompt({ prompt });
+      onGenerationComplete(result);
+    } catch (error) {
+      console.error("App generation failed:", error);
+      onGenerationComplete({ files: [] });
+    }
+  };
 
   const handleDownload = async () => {
     if (!generationResult) return;
@@ -36,7 +58,6 @@ export function ProgressSidebar({ isGenerating, generationResult, onReset }: Pro
     setIsZipping(true);
     const zip = new JSZip();
     generationResult.files.forEach(file => {
-      // Important: If the path contains folders, JSZip will create them.
       zip.file(file.path, file.content);
     });
 
@@ -45,7 +66,7 @@ export function ProgressSidebar({ isGenerating, generationResult, onReset }: Pro
       
       const element = document.createElement("a");
       element.href = URL.createObjectURL(zipBlob);
-      element.download = "GeniusAPPio-Project.zip";
+      element.download = `${appPlan?.appName || 'GeniusAPPio'}-Project.zip`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -55,68 +76,173 @@ export function ProgressSidebar({ isGenerating, generationResult, onReset }: Pro
       setIsZipping(false);
     }
   };
-  
-  const handleStartNew = () => {
-    onReset();
-  }
 
-  const isComplete = !isGenerating && generationResult !== null;
+  const toggleFolder = (folder: string) => {
+    const newExpanded = new Set(expandedFolders);
+    if (newExpanded.has(folder)) {
+      newExpanded.delete(folder);
+    } else {
+      newExpanded.add(folder);
+    }
+    setExpandedFolders(newExpanded);
+  };
+
+  const projectStructure = [
+    { name: 'android/', type: 'folder', description: 'ملفات أندرويد (Gradle, Kotlin/Java)' },
+    { name: 'ios/', type: 'folder', description: 'ملفات iOS (Xcode, Swift/ObjC)' },
+    { name: 'web/', type: 'folder', description: 'دعم الويب (اختياري)' },
+    { name: 'lib/', type: 'folder', description: 'كود Dart الأساسي', children: [
+      { name: 'main.dart', type: 'file', description: 'نقطة الدخول للتطبيق' },
+      { name: 'app.dart', type: 'file', description: 'تعريف MaterialApp, routes, theme' },
+      { name: 'core/', type: 'folder', description: 'أشياء عامة', children: [
+        { name: 'constants/', type: 'folder' },
+        { name: 'themes/', type: 'folder' },
+        { name: 'utils/', type: 'folder' },
+      ]},
+      { name: 'models/', type: 'folder', description: 'الموديلز (User, Settings...)' },
+      { name: 'services/', type: 'folder', description: 'خدمات (API, Firebase, Auth)' },
+      { name: 'providers/', type: 'folder', description: 'Riverpod providers' },
+      { name: 'screens/', type: 'folder', description: 'الصفحات (Login, Home, Settings...)' },
+      { name: 'widgets/', type: 'folder', description: 'Widgets عامة يعاد استخدامها' },
+    ]},
+    { name: 'assets/', type: 'folder', description: 'صور / أيقونات / ترجمات / خطوط' },
+    { name: 'test/', type: 'folder', description: 'اختبارات (Unit, Widget, Integration)' },
+    { name: 'pubspec.yaml', type: 'file', description: 'تعريف المشروع + dependencies' },
+    { name: 'analysis_options.yaml', type: 'file', description: 'lint rules' },
+    { name: 'README.md', type: 'file', description: 'توثيق المشروع + خطوات التشغيل' },
+  ];
+
+  const isComplete = currentStep === 'complete';
+
+  const renderProjectStructure = (items: any[], level = 0) => {
+    return items.map((item, index) => (
+      <div key={index} className={`${level > 0 ? 'ml-4' : ''}`}>
+        <div className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded">
+          {item.type === 'folder' ? (
+            <>
+              <button
+                onClick={() => toggleFolder(item.name)}
+                className="p-0 h-auto border-0 bg-transparent"
+              >
+                {expandedFolders.has(item.name) ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+              <Folder className="h-4 w-4 text-blue-600" />
+            </>
+          ) : (
+            <>
+              <div className="w-4" />
+              <FileCode className="h-4 w-4 text-gray-600" />
+            </>
+          )}
+          <span className="text-sm font-mono">{item.name}</span>
+        </div>
+        {item.type === 'folder' && item.children && expandedFolders.has(item.name) && (
+          <div className="ml-2">
+            {renderProjectStructure(item.children, level + 1)}
+          </div>
+        )}
+      </div>
+    ));
+  };
 
   return (
     <Card className="sticky top-24">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">Generation Progress</CardTitle>
-        <CardDescription>Your app's status will appear below.</CardDescription>
+        <CardTitle className="font-headline text-2xl">
+          {currentStep === 'prompt' && '📝 وصف التطبيق'}
+          {currentStep === 'planning' && '🤖 تحليل وتخطيط'}
+          {currentStep === 'database' && '🗄️ قاعدة البيانات'}
+          {currentStep === 'icon' && '🎨 أيقونة التطبيق'}
+          {currentStep === 'generating' && '⚡ توليد المشروع'}
+          {currentStep === 'complete' && '✅ مكتمل!'}
+        </CardTitle>
+        <CardDescription>
+          {appPlan ? `مشروع: ${appPlan.appName}` : 'تقدم بناء التطبيق'}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="min-h-[250px] flex items-center justify-center">
-        {isGenerating ? (
-            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-                <Loader className="h-12 w-12 mb-4 animate-spin" />
-                <p className="font-semibold">Warming up the AI...</p>
-                <p className="text-sm">Generating code structure and writing files.</p>
-            </div>
-        ) : !isComplete ? (
+      <CardContent className="min-h-[400px]">
+        {currentStep === 'prompt' && (
           <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-            <FileCode className="h-12 w-12 mb-4" />
-            <p>Fill out the form and click "Generate App" to start.</p>
+            <Bot className="h-16 w-16 mb-4 text-primary" />
+            <p className="text-lg font-semibold mb-2">ابدأ رحلة إنشاء تطبيقك</p>
+            <p className="text-sm">اكتب وصفاً مفصلاً للتطبيق الذي تريده</p>
           </div>
-        ) : (
-          <ul className="space-y-3 w-full h-64 overflow-y-auto pr-2">
-            {generationResult.files.map((file, index) => (
-              <li key={index} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                <FileCode className="h-5 w-5 text-primary flex-shrink-0" />
-                <span
-                  className="font-mono text-sm text-foreground truncate"
-                  title={file.path}
-                >
-                  {file.path}
-                </span>
-              </li>
-            ))}
-          </ul>
+        )}
+
+        {(currentStep === 'planning' || currentStep === 'database' || currentStep === 'icon') && appPlan && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg">
+              <h3 className="font-semibold text-center mb-2">🏗️ هيكل المشروع</h3>
+              <p className="text-sm text-center text-muted-foreground mb-3">
+                هذا هو الهيكل المخطط لمشروع Flutter الخاص بك
+              </p>
+            </div>
+            <div className="border rounded-lg p-3 max-h-80 overflow-y-auto bg-muted/20">
+              <div className="font-mono text-sm">
+                <div className="flex items-center gap-2 mb-3 font-semibold text-primary">
+                  <Folder className="h-4 w-4" />
+                  {appPlan.appName.replace(/\s+/g, '_').toLowerCase()}/
+                </div>
+                {renderProjectStructure(projectStructure)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentStep === 'generating' && (
+          <div className="flex flex-col items-center justify-center text-center p-8">
+            <div className="relative mb-6">
+              <Loader className="h-16 w-16 animate-spin text-primary" />
+              <Bot className="h-8 w-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
+            </div>
+            <p className="text-lg font-semibold mb-2">🚀 جارِ توليد المشروع...</p>
+            <p className="text-sm text-muted-foreground">أقوم بكتابة جميع ملفات المشروع</p>
+          </div>
+        )}
+
+        {isComplete && generationResult && (
+          <div className="space-y-4">
+            <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-2" />
+              <p className="text-green-700 dark:text-green-400 font-semibold text-lg">
+                🎉 تم إنشاء المشروع بنجاح!
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 max-h-60 overflow-y-auto">
+              <p className="text-sm font-semibold mb-2">📁 الملفات المولدة ({generationResult.files.length}):</p>
+              <ul className="space-y-1">
+                {generationResult.files.map((file, index) => (
+                  <li key={index} className="flex items-center gap-2 text-xs">
+                    <FileCode className="h-3 w-3 text-primary" />
+                    <span className="font-mono">{file.path}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         )}
       </CardContent>
       {isComplete && (
-        <CardFooter className="flex flex-col gap-4">
-          <div className="flex items-center text-sm text-green-600 font-medium">
-             <CheckCircle className="mr-2 h-4 w-4" />
-            <span>Generation Complete!</span>
-          </div>
+        <CardFooter className="flex flex-col gap-3">
           <Button className="w-full" onClick={handleDownload} disabled={isZipping}>
             {isZipping ? (
-                <>
-                    <Loader className="mr-2 h-4 w-4 animate-spin" />
-                    <span>Packaging...</span>
-                </>
+              <>
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+                جارِ التحضير...
+              </>
             ) : (
-                <>
-                    <FileArchive className="mr-2 h-4 w-4" /> 
-                    <span>Download Project ZIP</span>
-                </>
+              <>
+                <FileArchive className="mr-2 h-4 w-4" />
+                تحميل المشروع ZIP
+              </>
             )}
           </Button>
-          <Button variant="outline" className="w-full" onClick={handleStartNew}>
-            Start New Project
+          <Button variant="outline" className="w-full" onClick={onReset}>
+            إنشاء مشروع جديد
           </Button>
         </CardFooter>
       )}
