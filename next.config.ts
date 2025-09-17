@@ -45,11 +45,15 @@ const nextConfig: NextConfig = {
   },
   // Allow all dev origins for Replit proxy system
   allowedDevOrigins: [
-    'https://d000417b-11a4-49b6-8f13-9130267f7a3b-00-2aa2xt5lrj2s5.riker.replit.dev',
+    'https://d692d3fd-44cc-46fc-a3f1-fb5c04519740-00-g2efxgapcszu.worf.replit.dev',
+    'https://*.worf.replit.dev',
     'https://*.riker.replit.dev',
     'https://*.replit.dev',
     'https://*.replit.app', 
-    'https://*.replit.com'
+    'https://*.replit.com',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://0.0.0.0:5000'
   ],
   images: {
     remotePatterns: [
