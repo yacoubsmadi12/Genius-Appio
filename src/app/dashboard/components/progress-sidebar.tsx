@@ -11,12 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight, Terminal } from "lucide-react";
+import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight, Terminal, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { generateAppFromPrompt } from "@/ai/flows";
 import type { GenerateAppFromPromptOutput } from "@/ai/flows";
 import type { WorkflowStep, AppPlan } from "../page";
+import { FlutterPreview } from "@/components/flutter-preview";
 
 type ProgressSidebarProps = {
   currentStep: WorkflowStep;
@@ -31,6 +32,7 @@ type ProgressSidebarProps = {
 export function ProgressSidebar({ currentStep, appPlan, isGenerating, generationResult, onReset, onGenerationComplete }: ProgressSidebarProps) {
   const [isZipping, setIsZipping] = useState(false);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['lib']));
+  const [showPreview, setShowPreview] = useState(false);
 
   // Start generation when reaching generation phase
   useEffect(() => {
@@ -101,6 +103,10 @@ Primary Colors: ${appPlan.colors.join(', ')}
     } finally {
       setIsZipping(false);
     }
+  };
+
+  const handlePreview = () => {
+    setShowPreview(true);
   };
 
   const toggleFolder = (folder: string) => {
@@ -284,6 +290,10 @@ Primary Colors: ${appPlan.colors.join(', ')}
       </CardContent>
       {isComplete && (
         <CardFooter className="flex flex-col gap-3">
+          <Button className="w-full" onClick={handlePreview}>
+            <Eye className="mr-2 h-4 w-4" />
+            معاينة التطبيق في المحاكي
+          </Button>
           <Button className="w-full" onClick={handleDownload} disabled={isZipping}>
             {isZipping ? (
               <>
@@ -301,6 +311,16 @@ Primary Colors: ${appPlan.colors.join(', ')}
             Create New Project
           </Button>
         </CardFooter>
+      )}
+      
+      {/* Flutter Preview Modal */}
+      {showPreview && generationResult && appPlan && (
+        <FlutterPreview
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          generationResult={generationResult}
+          appName={appPlan.appName}
+        />
       )}
     </Card>
   );
