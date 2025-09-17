@@ -2,6 +2,19 @@
 
 This is a Next.js-based AI-powered app generation platform called "AppForge AI" (branded as "Genius APPio"). The platform allows users to generate complete Flutter applications by providing natural language prompts describing their desired app features, pages, and design. The system leverages Google's Gemini AI through Genkit to interpret user prompts and generate structured Flutter project files that can be downloaded as ZIP archives.
 
+# Recent Updates
+
+## September 17, 2025 - GitHub Import & AI Enhancement
+- **GitHub Import Setup**: Successfully imported and configured the project to run in Replit environment
+- **AI Generation Enhancement**: Improved AI prompt engineering for better organized Flutter code generation
+  - Enhanced prompt to extract app specifications (name, backend, description, pages, features, colors)
+  - Added structured data passing for better AI understanding
+  - Configured to generate clean, organized Dart code instead of paragraphs
+  - Removed platform file generation to focus on core Flutter code
+- **Environment Configuration**: Set up Google AI API integration and Firebase configuration
+- **Deployment Ready**: Configured deployment settings for production use
+- **Performance**: All components tested and working correctly on port 5000
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
