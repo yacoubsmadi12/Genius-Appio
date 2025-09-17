@@ -10,7 +10,12 @@ This is a Next.js-based AI-powered app generation platform called "AppForge AI" 
   - Enhanced prompt to extract app specifications (name, backend, description, pages, features, colors)
   - Added structured data passing for better AI understanding
   - Configured to generate clean, organized Dart code instead of paragraphs
-  - Removed platform file generation to focus on core Flutter code
+- **Complete Flutter Project Generation**: Implemented full Flutter project skeleton generation
+  - Created comprehensive Flutter web project template with all necessary files
+  - AI-generated files now overlay on complete project structure instead of partial lib/ folder
+  - Generated projects are now complete and runnable with `flutter run -d chrome`
+  - Includes all necessary web platform files: index.html, manifest.json, PWA icons, etc.
+  - Android and iOS support planned for future implementation when Flutter SDK is available
 - **Environment Configuration**: Set up Google AI API integration and Firebase configuration
 - **Deployment Ready**: Configured deployment settings for production use
 - **Performance**: All components tested and working correctly on port 5000
@@ -50,14 +55,25 @@ Preferred communication style: Simple, everyday language.
 
 ## File Generation Flow
 1. User submits natural language prompt describing desired app
-2. Genkit processes prompt using Gemini AI model
-3. System generates complete Flutter project structure including:
+2. System extracts app name and creates complete Flutter web project template including:
+   - Web platform folder with index.html, manifest.json, and PWA icons
+   - Project metadata and configuration files
+   - Test structure and analysis configuration
+3. Genkit processes prompt using Gemini AI model to generate:
    - Main application files (main.dart, app.dart)
    - Screen components and navigation
    - Models and services
-   - Asset configuration
-   - Platform-specific files (Android/iOS)
-4. Generated files are packaged and made available for download
+   - Custom pubspec.yaml with dependencies
+4. AI-generated files are merged with complete project template
+5. Complete, runnable Flutter project is packaged and made available for download
+
+### Template Files Generated
+- **Web Platform**: index.html, manifest.json, PWA icons, web configuration
+- **Project Root**: pubspec.yaml, .gitignore, .metadata, analysis_options.yaml
+- **Application Code**: lib/main.dart with Material 3 architecture
+- **Testing**: Basic widget tests and test configuration
+
+Note: Projects are currently web-optimized. Android and iOS platform support will be added in future versions when Flutter SDK is available in the environment.
 
 # External Dependencies
 
