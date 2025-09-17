@@ -43,7 +43,33 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
     if (!appPlan) return;
     
     try {
-      const prompt = `App Name: ${appPlan.appName}. Backend: ${appPlan.backend}. Description: ${appPlan.description}. Pages: ${appPlan.pages.join(', ')}. Features: ${appPlan.features.join(', ')}. Colors: ${appPlan.colors.join(', ')}.`;
+      const prompt = `
+**APP SPECIFICATIONS:**
+
+App Name: "${appPlan.appName}"
+Backend Type: ${appPlan.backend}
+
+**DESCRIPTION:**
+${appPlan.description}
+
+**REQUIRED PAGES:**
+${appPlan.pages.map((page, index) => `${index + 1}. ${page}`).join('\n')}
+
+**REQUIRED FEATURES:**
+${appPlan.features.map((feature, index) => `${index + 1}. ${feature}`).join('\n')}
+
+**COLOR SCHEME:**
+Primary Colors: ${appPlan.colors.join(', ')}
+
+**ADDITIONAL REQUIREMENTS:**
+- Create complete, functional Flutter code for all pages
+- Use modern Flutter practices and clean architecture
+- Implement proper navigation between screens
+- Apply the specified color scheme throughout the app
+- Generate organized, readable code with proper imports and structure
+- Include realistic UI elements and functionality for each feature
+      `.trim();
+      
       const result = await generateAppFromPrompt({ prompt });
       onGenerationComplete(result);
     } catch (error) {

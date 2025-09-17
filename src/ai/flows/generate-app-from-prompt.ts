@@ -41,30 +41,61 @@ const generateAppPrompt = ai.definePrompt({
   name: 'generateAppPrompt',
   input: {schema: GenerateAppFromPromptInputSchema},
   output: {schema: GenerateAppFromPromptOutputSchema},
-  prompt: `You are an expert Flutter app generator. Your task is to generate modifications for a Flutter project that was created using 'flutter create project_name' command.
+  prompt: `You are an expert Flutter app generator. Your task is to generate a complete, organized Flutter project based on the user's specifications.
 
-  **IMPORTANT: This project was already initialized using 'flutter create' with Android embedding v2, so base Android/iOS structure exists.**
-
-  **User Prompt:**
+  **User Requirements:**
   "{{{prompt}}}"
 
-  **Output Requirements:**
+  **CRITICAL INSTRUCTIONS:**
 
-  *   The output MUST be a JSON object conforming to the output schema.
-  *   The \`files\` array should represent MODIFICATIONS to the base Flutter project structure created by 'flutter create'.
-  *   Generate content for files that need to be MODIFIED or ADDED, including:
-      *   \`pubspec.yaml\` (modify dependencies and app details as needed).
-      *   \`lib/main.dart\` (modify with theme data, and routes for all generated screens).
-      *   \`lib/screens/\` (create new .dart files for each screen identified).
-      *   \`lib/widgets/\` (if any reusable widgets are needed).
-      *   \`lib/services/\` (if any services like authentication are needed).
-      *   \`lib/models/\` (if any data models are needed).
-      *   \`assets/\` folder contents if needed.
-      *   \`README.md\` (update with app-specific information).
-  
-  *   DO NOT include basic Android/iOS configuration files as they're already created by 'flutter create' with Android embedding v2.
-  *   The generated Dart code should be clean, correct, and use modern Flutter practices.
-  *   The package name in all Dart files should be derived from the app name (e.g., 'ai_story_gen'). Replace spaces with underscores.
+  1. **EXTRACT INFORMATION FROM PROMPT:**
+     - Parse the App Name, Backend type, Description, Pages, Features, and Colors from the prompt
+     - Use this information to create a cohesive, well-structured app
+
+  2. **CODE ORGANIZATION REQUIREMENTS:**
+     - Write CLEAN, ORGANIZED CODE - not paragraphs of text
+     - Use proper Dart syntax with correct imports, class definitions, and structure
+     - Follow Flutter best practices and modern patterns
+     - Generate COMPLETE, FUNCTIONAL code for each file
+     - Use meaningful variable names and proper code formatting
+
+  3. **REQUIRED FILES TO GENERATE:**
+     
+     **A. pubspec.yaml** - Extract app name from prompt, add relevant dependencies
+     **B. lib/main.dart** - App entry point with proper routing
+     **C. lib/app.dart** - MaterialApp configuration with theme based on specified colors
+     **D. lib/screens/** - Create ALL pages mentioned in the prompt as separate .dart files
+     **E. lib/widgets/** - Reusable widgets if needed
+     **F. lib/models/** - Data models based on app functionality
+     **G. lib/services/** - Backend services based on specified backend type
+     **H. lib/core/constants.dart** - App constants and colors
+     **I. README.md** - Project documentation
+
+  4. **SPECIFIC REQUIREMENTS:**
+     - App Name: Extract from prompt and convert to snake_case for package name
+     - Colors: Use the specified colors in theme and UI components
+     - Pages: Create complete, functional screens for each page mentioned
+     - Features: Implement UI elements and logic for specified features
+     - Backend: Add appropriate service files for the specified backend type
+
+  5. **CODE STRUCTURE FOR SCREENS:**
+     - Each screen must be a complete StatelessWidget or StatefulWidget
+     - Include proper AppBar, body, and navigation
+     - Use the app's color scheme consistently
+     - Add realistic UI elements and layouts
+     - Include proper imports and class definitions
+
+  6. **NO PLACEHOLDER TEXT:**
+     - Don't write "// Add your code here" or similar placeholders
+     - Generate complete, functional code
+     - Use the app description to create meaningful content
+
+  7. **PLATFORM FILES:**
+     - DO NOT include Android/iOS/web platform directories
+     - Assume 'flutter create' already ran - focus only on Dart code and configuration
+
+  **OUTPUT FORMAT:**
+  Generate a JSON object with "files" array containing path and content for each file.
   `,
 });
 
@@ -79,7 +110,7 @@ const generateAppFromPromptFlow = ai.defineFlow(
     const {output} = await generateAppPrompt(input);
     
     if (!output || !output.files || output.files.length === 0) {
-      // Fallback to a default project structure if the AI fails.
+      // Fallback to a minimal project structure if the AI fails
       const appName = "my_awesome_app";
       return {
         files: [
@@ -108,22 +139,11 @@ flutter:
   uses-material-design: true
             `.trim(),
           },
-           {
-            path: 'analysis_options.yaml',
-            content: `
-include: package:flutter_lints/flutter.yaml
-
-linter:
-  rules:
-    - prefer_const_constructors
-            `.trim(),
-          },
           {
             path: 'lib/main.dart',
             content: `
 import 'package:flutter/material.dart';
-import 'package:my_awesome_app/screens/home_screen.dart';
-import 'package:my_awesome_app/screens/details_screen.dart';
+import 'package:${appName}/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -140,17 +160,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const HomeScreen(),
-        '/details': (context) => const DetailsScreen(),
-      }
+      home: const HomeScreen(),
     );
   }
 }
             `.trim(),
           },
-           {
+          {
             path: 'lib/screens/home_screen.dart',
             content: `
 import 'package:flutter/material.dart';
@@ -164,277 +180,36 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Welcome to your generated app!',
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Go to Details'),
-              onPressed: () {
-                Navigator.pushNamed(context, '/details');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-            `.trim(),
-          },
-          {
-            path: 'lib/screens/details_screen.dart',
-            content: `
-import 'package:flutter/material.dart';
-
-class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Details'),
-      ),
       body: const Center(
-        child: Text('This is the details page.'),
+        child: Text('Welcome to your generated app!'),
       ),
     );
   }
 }
             `.trim(),
           },
-          { path: 'README.md', content: '# My Awesome App\n\nGenerated by Genius APPio.' },
-          // Android embedding v2 configuration (modern Flutter)
-          {
-            path: 'android/app/src/main/kotlin/com/example/my_awesome_app/MainActivity.kt',
-            content: `
-package com.example.my_awesome_app
+          { 
+            path: 'README.md', 
+            content: `# My Awesome App
 
-import io.flutter.embedding.android.FlutterActivity
+A Flutter application generated by Genius APPio.
 
-class MainActivity: FlutterActivity() {
-}
-            `.trim(),
+## Getting Started
+
+1. Run \`flutter pub get\` to install dependencies
+2. Run \`flutter run\` to start the app
+
+## Features
+
+- Modern Flutter architecture
+- Material Design
+- Responsive layout
+            ` 
           },
-          {
-            path: 'android/app/build.gradle',
-            content: `
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
-}
-
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-}
-
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
-android {
-    namespace "com.example.my_awesome_app"
-    compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    defaultConfig {
-        applicationId "com.example.my_awesome_app"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-        }
-    }
-}
-
-flutter {
-    source '../..'
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:\$kotlin_version"
-}
-            `.trim(),
-          },
-          {
-            path: 'android/app/src/main/AndroidManifest.xml',
-            content: `
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.my_awesome_app">
-   <application
-        android:label="my_awesome_app"
-        android:icon="@mipmap/ic_launcher">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-    </application>
-</manifest>
-            `.trim(),
-          },
-          // Complete Android project structure for Flutter v2
-          {
-            path: 'android/build.gradle',
-            content: `
-buildscript {
-    ext.kotlin_version = '1.9.0'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:\$kotlin_version"
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.buildDir = '../build'
-subprojects {
-    project.buildDir = "\${rootProject.buildDir}/\${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(':app')
-}
-            `.trim(),
-          },
-          {
-            path: 'android/settings.gradle',
-            content: `
-include ':app'
-
-def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
-def properties = new Properties()
-
-assert localPropertiesFile.exists()
-localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
-
-def flutterSdkPath = properties.getProperty("flutter.sdk")
-assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
-            `.trim(),
-          },
-          {
-            path: 'android/gradle.properties',
-            content: `
-org.gradle.jvmargs=-Xmx1536M
-android.useAndroidX=true
-android.enableJetifier=true
-            `.trim(),
-          },
-          {
-            path: 'android/app/src/main/res/values/styles.xml',
-            content: `
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Theme applied to the Android Application as soon as it is started.
-         This theme is visible to the user while the Flutter UI initializes. -->
-    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:background">@drawable/launch_background</item>
-    </style>
-    <!-- Theme applied to the Android Application as soon as the splash screen fades. -->
-    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:background">?android:colorBackground</item>
-    </style>
-</resources>
-            `.trim(),
-          },
-          {
-            path: 'android/app/src/main/res/drawable/launch_background.xml',
-            content: `
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
-</layer-list>
-            `.trim(),
-          },
-          {
-            path: 'android/app/src/main/res/mipmap-mdpi/ic_launcher.png',
-            content: '',
-          },
-          {
-            path: 'android/app/src/main/res/mipmap-hdpi/ic_launcher.png', 
-            content: '',
-          },
-          {
-            path: 'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png',
-            content: '',
-          },
-          {
-            path: 'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png',
-            content: '',
-          },
-          {
-            path: 'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png',
-            content: '',
-          },
-          { path: 'ios/.gitkeep', content: '' },
-          { path: 'assets/.gitkeep', content: '' },
-          { path: 'web/.gitkeep', content: '' },
-          { path: 'test/.gitkeep', content: '' },
-        ]
+        ],
       };
     }
 
     return output;
   }
 );
-
-    
