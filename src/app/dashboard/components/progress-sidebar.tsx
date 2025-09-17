@@ -32,7 +32,7 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
   const [isZipping, setIsZipping] = useState(false);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['lib']));
 
-  // بدء التوليد عند الوصول لمرحلة التوليد
+  // Start generation when reaching generation phase
   useEffect(() => {
     if (currentStep === 'generating' && appPlan && !generationResult) {
       handleGeneration();
@@ -88,28 +88,28 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
   };
 
   const projectStructure = [
-    { name: 'android/', type: 'folder', description: 'ملفات أندرويد (Gradle, Kotlin/Java)' },
-    { name: 'ios/', type: 'folder', description: 'ملفات iOS (Xcode, Swift/ObjC)' },
-    { name: 'web/', type: 'folder', description: 'دعم الويب (اختياري)' },
-    { name: 'lib/', type: 'folder', description: 'كود Dart الأساسي', children: [
-      { name: 'main.dart', type: 'file', description: 'نقطة الدخول للتطبيق' },
-      { name: 'app.dart', type: 'file', description: 'تعريف MaterialApp, routes, theme' },
-      { name: 'core/', type: 'folder', description: 'أشياء عامة', children: [
+    { name: 'android/', type: 'folder', description: 'Android files (Gradle, Kotlin/Java)' },
+    { name: 'ios/', type: 'folder', description: 'iOS files (Xcode, Swift/ObjC)' },
+    { name: 'web/', type: 'folder', description: 'Web support (optional)' },
+    { name: 'lib/', type: 'folder', description: 'Core Dart code', children: [
+      { name: 'main.dart', type: 'file', description: 'App entry point' },
+      { name: 'app.dart', type: 'file', description: 'MaterialApp, routes, theme definition' },
+      { name: 'core/', type: 'folder', description: 'Common utilities', children: [
         { name: 'constants/', type: 'folder' },
         { name: 'themes/', type: 'folder' },
         { name: 'utils/', type: 'folder' },
       ]},
-      { name: 'models/', type: 'folder', description: 'الموديلز (User, Settings...)' },
-      { name: 'services/', type: 'folder', description: 'خدمات (API, Firebase, Auth)' },
+      { name: 'models/', type: 'folder', description: 'Data models (User, Settings...)' },
+      { name: 'services/', type: 'folder', description: 'Services (API, Firebase, Auth)' },
       { name: 'providers/', type: 'folder', description: 'Riverpod providers' },
-      { name: 'screens/', type: 'folder', description: 'الصفحات (Login, Home, Settings...)' },
-      { name: 'widgets/', type: 'folder', description: 'Widgets عامة يعاد استخدامها' },
+      { name: 'screens/', type: 'folder', description: 'App screens (Login, Home, Settings...)' },
+      { name: 'widgets/', type: 'folder', description: 'Reusable widgets' },
     ]},
-    { name: 'assets/', type: 'folder', description: 'صور / أيقونات / ترجمات / خطوط' },
-    { name: 'test/', type: 'folder', description: 'اختبارات (Unit, Widget, Integration)' },
-    { name: 'pubspec.yaml', type: 'file', description: 'تعريف المشروع + dependencies' },
-    { name: 'analysis_options.yaml', type: 'file', description: 'lint rules' },
-    { name: 'README.md', type: 'file', description: 'توثيق المشروع + خطوات التشغيل' },
+    { name: 'assets/', type: 'folder', description: 'Images / icons / translations / fonts' },
+    { name: 'test/', type: 'folder', description: 'Tests (Unit, Widget, Integration)' },
+    { name: 'pubspec.yaml', type: 'file', description: 'Project definition + dependencies' },
+    { name: 'analysis_options.yaml', type: 'file', description: 'Lint rules' },
+    { name: 'README.md', type: 'file', description: 'Project documentation + setup steps' },
   ];
 
   const isComplete = currentStep === 'complete';
@@ -153,32 +153,32 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
     <Card className="sticky top-24">
       <CardHeader>
         <CardTitle className="font-headline text-2xl">
-          {currentStep === 'prompt' && '📝 وصف التطبيق'}
-          {currentStep === 'planning' && '🤖 تحليل وتخطيط'}
-          {currentStep === 'database' && '🗄️ قاعدة البيانات'}
-          {currentStep === 'icon' && '🎨 أيقونة التطبيق'}
-          {currentStep === 'generating' && '⚡ توليد المشروع'}
-          {currentStep === 'complete' && '✅ مكتمل!'}
+          {currentStep === 'prompt' && '📝 App Description'}
+          {currentStep === 'planning' && '🤖 Analysis & Planning'}
+          {currentStep === 'database' && '🗄️ Database'}
+          {currentStep === 'icon' && '🎨 App Icon'}
+          {currentStep === 'generating' && '⚡ Generating Project'}
+          {currentStep === 'complete' && '✅ Complete!'}
         </CardTitle>
         <CardDescription>
-          {appPlan ? `مشروع: ${appPlan.appName}` : 'تقدم بناء التطبيق'}
+          {appPlan ? `Project: ${appPlan.appName}` : 'App building progress'}
         </CardDescription>
       </CardHeader>
       <CardContent className="min-h-[400px]">
         {currentStep === 'prompt' && (
           <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
             <Bot className="h-16 w-16 mb-4 text-primary" />
-            <p className="text-lg font-semibold mb-2">ابدأ رحلة إنشاء تطبيقك</p>
-            <p className="text-sm">اكتب وصفاً مفصلاً للتطبيق الذي تريده</p>
+            <p className="text-lg font-semibold mb-2">Start your app creation journey</p>
+            <p className="text-sm">Write a detailed description of the app you want</p>
           </div>
         )}
 
         {(currentStep === 'planning' || currentStep === 'database' || currentStep === 'icon') && appPlan && (
           <div className="space-y-4">
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg">
-              <h3 className="font-semibold text-center mb-2">🏗️ هيكل المشروع</h3>
+              <h3 className="font-semibold text-center mb-2">🏗️ Project Structure</h3>
               <p className="text-sm text-center text-muted-foreground mb-3">
-                هذا هو الهيكل المخطط لمشروع Flutter الخاص بك
+                This is the planned structure for your Flutter project
               </p>
             </div>
             <div className="border rounded-lg p-3 max-h-80 overflow-y-auto bg-muted/20">
@@ -199,8 +199,8 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
               <Loader className="h-16 w-16 animate-spin text-primary" />
               <Bot className="h-8 w-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
             </div>
-            <p className="text-lg font-semibold mb-2">🚀 جارِ توليد المشروع...</p>
-            <p className="text-sm text-muted-foreground">أقوم بكتابة جميع ملفات المشروع</p>
+            <p className="text-lg font-semibold mb-2">🚀 Generating project...</p>
+            <p className="text-sm text-muted-foreground">Writing all project files</p>
           </div>
         )}
 
@@ -209,11 +209,11 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-2" />
               <p className="text-green-700 dark:text-green-400 font-semibold text-lg">
-                🎉 تم إنشاء المشروع بنجاح!
+                🎉 Project created successfully!
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 max-h-60 overflow-y-auto">
-              <p className="text-sm font-semibold mb-2">📁 الملفات المولدة ({generationResult.files.length}):</p>
+              <p className="text-sm font-semibold mb-2">📁 Generated files ({generationResult.files.length}):</p>
               <ul className="space-y-1">
                 {generationResult.files.map((file, index) => (
                   <li key={index} className="flex items-center gap-2 text-xs">
@@ -232,17 +232,17 @@ export function ProgressSidebar({ currentStep, appPlan, isGenerating, generation
             {isZipping ? (
               <>
                 <Loader className="mr-2 h-4 w-4 animate-spin" />
-                جارِ التحضير...
+                Preparing...
               </>
             ) : (
               <>
                 <FileArchive className="mr-2 h-4 w-4" />
-                تحميل المشروع ZIP
+                Download Project ZIP
               </>
             )}
           </Button>
           <Button variant="outline" className="w-full" onClick={onReset}>
-            إنشاء مشروع جديد
+            Create New Project
           </Button>
         </CardFooter>
       )}

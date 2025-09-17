@@ -60,7 +60,7 @@ export default function DashboardPage() {
           Genius APPio
         </h1>
         <p className="mt-4 text-xl text-muted-foreground">
-          دعنا نبني تطبيقك بطريقة ذكية وتفاعلية
+          Let's build your app intelligently and interactively
         </p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">

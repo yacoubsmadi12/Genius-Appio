@@ -24,15 +24,15 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
 
   const handleGenerateIcon = async () => {
     setIsGenerating(true);
-    // محاكاة توليد الأيقونة
+    // Simulate icon generation
     await new Promise(resolve => setTimeout(resolve, 3000));
-    setGeneratedIcon("https://picsum.photos/200/200?random=1"); // أيقونة تجريبية
+    setGeneratedIcon("https://picsum.photos/200/200?random=1"); // Sample icon
     setIsGenerating(false);
     setIsReady(true);
   };
 
   const handleUpload = () => {
-    // محاكاة رفع الأيقونة
+    // Simulate icon upload
     setIsReady(true);
   };
 
@@ -45,10 +45,10 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Palette className="h-5 w-5" />
-          أيقونة التطبيق
+          App Icon
         </CardTitle>
         <CardDescription>
-          اختر كيف تريد إنشاء أيقونة لتطبيق "{appPlan.appName}"
+          Choose how you want to create an icon for the "{appPlan.appName}" app
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -60,10 +60,10 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
                 <div className="flex-1">
                   <Label htmlFor="generate" className="text-base font-semibold cursor-pointer flex items-center gap-2">
                     <Sparkles className="h-4 w-4" />
-                    توليد بالذكاء الاصطناعي
+                    Generate with AI
                   </Label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    سأقوم بإنشاء أيقونة مخصصة بناءً على وصف التطبيق والألوان المختارة
+                    I'll create a custom icon based on the app description and selected colors
                   </p>
                 </div>
               </div>
@@ -73,10 +73,10 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
                 <div className="flex-1">
                   <Label htmlFor="upload" className="text-base font-semibold cursor-pointer flex items-center gap-2">
                     <Upload className="h-4 w-4" />
-                    رفع أيقونة من جهازك
+                    Upload an icon from your device
                   </Label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    ارفع أيقونة جاهزة من جهازك (PNG، JPG، SVG)
+                    Upload a ready icon from your device (PNG, JPG, SVG)
                   </p>
                 </div>
               </div>
@@ -86,9 +86,9 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
               <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-lg">
                 <div className="text-center">
                   <Sparkles className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">توليد أيقونة ذكية</h3>
+                  <h3 className="font-semibold mb-2">Smart Icon Generation</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    سأستخدم اسم التطبيق "{appPlan.appName}" ووصفه لإنشاء أيقونة مميزة
+                    I'll use the app name "{appPlan.appName}" and its description to create a unique icon
                   </p>
                   <Button 
                     onClick={handleGenerateIcon} 
@@ -98,10 +98,10 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
                     {isGenerating ? (
                       <>
                         <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                        جاري التوليد...
+                        Generating...
                       </>
                     ) : (
-                      'توليد الأيقونة'
+                      'Generate Icon'
                     )}
                   </Button>
                 </div>
@@ -111,7 +111,7 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
             {iconOption === 'upload' && (
               <div className="border-2 border-dashed border-muted-foreground/25 p-6 rounded-lg text-center">
                 <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-sm text-muted-foreground mb-4">اختر ملف الأيقونة من جهازك</p>
+                <p className="text-sm text-muted-foreground mb-4">Choose an icon file from your device</p>
                 <Input 
                   type="file" 
                   accept="image/*"
@@ -126,7 +126,7 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
                 <div className="animate-pulse">
                   <div className="h-24 w-24 bg-muted rounded-xl mx-auto mb-4"></div>
                 </div>
-                <p className="text-muted-foreground">جاري إنشاء أيقونة مخصصة لتطبيقك...</p>
+                <p className="text-muted-foreground">Creating custom icon for your app...</p>
               </div>
             )}
 
@@ -141,7 +141,7 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
                 />
                 <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
                 <p className="text-green-700 dark:text-green-400 font-semibold">
-                  تم إنشاء الأيقونة بنجاح!
+                  Icon created successfully!
                 </p>
               </div>
             )}
@@ -149,13 +149,13 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
         ) : (
           <div className="text-center p-8">
             <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">الأيقونة جاهزة!</h3>
+            <h3 className="text-xl font-semibold mb-2">Icon Ready!</h3>
             <p className="text-muted-foreground mb-4">
-              تم تحضير أيقونة تطبيق "{appPlan.appName}" بنجاح
+              "{appPlan.appName}" app icon has been prepared successfully
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
               <p className="text-blue-700 dark:text-blue-400">
-                🎉 كل شيء جاهز! يمكننا الآن بدء توليد ملفات المشروع
+                🎉 Everything ready! We can now start generating project files
               </p>
             </div>
           </div>
@@ -164,12 +164,12 @@ export function IconStep({ appPlan, onComplete, onBack }: IconStepProps) {
         <div className="flex justify-between">
           <Button variant="outline" onClick={onBack}>
             <ChevronLeft className="h-4 w-4 mr-2" />
-            السابق
+            Previous
           </Button>
           
           {isReady && (
             <Button onClick={handleContinue} className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
-              ابدأ توليد المشروع! 🚀
+              Start Project Generation! 🚀
               <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           )}

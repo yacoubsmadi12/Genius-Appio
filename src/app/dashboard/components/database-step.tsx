@@ -21,7 +21,7 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
 
   const handleConnect = async () => {
     setIsConnecting(true);
-    // محاكاة عملية الاتصال
+    // Simulate connection process
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsConnected(true);
     setIsConnecting(false);
@@ -35,20 +35,20 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
     {
       id: 'firebase',
       name: 'Firebase',
-      description: 'قاعدة بيانات Google Firebase مع المصادقة والتخزين',
-      features: ['مصادقة المستخدمين', 'قاعدة بيانات في الوقت الفعلي', 'تخزين الملفات', 'استضافة مجانية']
+      description: 'Google Firebase database with authentication and storage',
+      features: ['User authentication', 'Real-time database', 'File storage', 'Free hosting']
     },
     {
       id: 'supabase',
       name: 'Supabase',
-      description: 'قاعدة بيانات PostgreSQL مع API تلقائي',
-      features: ['قاعدة بيانات SQL', 'API تلقائي', 'مصادقة متقدمة', 'Real-time subscriptions']
+      description: 'PostgreSQL database with automatic API',
+      features: ['SQL database', 'Automatic API', 'Advanced authentication', 'Real-time subscriptions']
     },
     {
       id: 'nodejs',
-      name: 'Node.js مخصص',
-      description: 'خادم Node.js مخصص مع MongoDB أو MySQL',
-      features: ['تحكم كامل', 'مرونة عالية', 'أداء محسن', 'قابلية التخصيص']
+      name: 'Custom Node.js',
+      description: 'Custom Node.js server with MongoDB or MySQL',
+      features: ['Full control', 'High flexibility', 'Optimized performance', 'Customizable']
     }
   ];
 
@@ -59,10 +59,10 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Database className="h-5 w-5" />
-          اختيار قاعدة البيانات
+          Database Selection
         </CardTitle>
         <CardDescription>
-          اختر نوع قاعدة البيانات التي تريد ربطها بتطبيق "{appPlan.appName}"
+          Choose the database type you want to connect to the "{appPlan.appName}" app
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -92,7 +92,7 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
             {selectedOption && (
               <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
                 <p className="text-blue-700 dark:text-blue-400 text-center mb-4">
-                  هل تريد ربط {selectedOption.name} بالتطبيق الآن؟
+                  Do you want to connect {selectedOption.name} to the app now?
                 </p>
                 <Button 
                   onClick={handleConnect} 
@@ -102,10 +102,10 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
                   {isConnecting ? (
                     <>
                       <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                      جاري الربط...
+                      Connecting...
                     </>
                   ) : (
-                    `ربط ${selectedOption.name}`
+                    `Connect ${selectedOption.name}`
                   )}
                 </Button>
               </div>
@@ -114,13 +114,13 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
         ) : (
           <div className="text-center p-8">
             <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">تم الربط بنجاح!</h3>
+            <h3 className="text-xl font-semibold mb-2">Connected Successfully!</h3>
             <p className="text-muted-foreground mb-4">
-              تم ربط {selectedOption?.name} بتطبيق "{appPlan.appName}" بنجاح
+              {selectedOption?.name} has been connected to the "{appPlan.appName}" app successfully
             </p>
             <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
               <p className="text-green-700 dark:text-green-400">
-                ✅ إعداد قاعدة البيانات مكتمل - يمكننا الآن المتابعة لاختيار أيقونة التطبيق
+                ✅ Database setup complete - we can now continue to select the app icon
               </p>
             </div>
           </div>
@@ -129,12 +129,12 @@ export function DatabaseStep({ appPlan, onComplete, onBack }: DatabaseStepProps)
         <div className="flex justify-between">
           <Button variant="outline" onClick={onBack}>
             <ChevronLeft className="h-4 w-4 mr-2" />
-            السابق
+            Previous
           </Button>
           
           {isConnected && (
             <Button onClick={handleContinue}>
-              متابعة لاختيار الأيقونة
+              Continue to Icon Selection
               <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           )}
