@@ -11,13 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight, Terminal, Eye } from "lucide-react";
+import { CheckCircle, Circle, Coffee, FileArchive, Loader, FileCode, Bot, Folder, ChevronDown, ChevronRight, Terminal, Eye, Play, ExternalLink, Hammer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { generateAppFromPrompt } from "@/ai/flows";
 import type { GenerateAppFromPromptOutput } from "@/ai/flows";
 import type { WorkflowStep, AppPlan } from "../page";
-import { FlutterPreview } from "@/components/flutter-preview";
 
 type ProgressSidebarProps = {
   currentStep: WorkflowStep;
@@ -32,7 +31,9 @@ type ProgressSidebarProps = {
 export function ProgressSidebar({ currentStep, appPlan, isGenerating, generationResult, onReset, onGenerationComplete }: ProgressSidebarProps) {
   const [isZipping, setIsZipping] = useState(false);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['lib']));
-  const [showPreview, setShowPreview] = useState(false);
+  const [isBuilding, setIsBuilding] = useState(false);
+  const [buildResult, setBuildResult] = useState<{success: boolean, projectId: string, previewUrl: string, message: string} | null>(null);
+  const [buildError, setBuildError] = useState<string | null>(null);
 
   // Start generation when reaching generation phase
   useEffect(() => {
@@ -105,8 +106,43 @@ Primary Colors: ${appPlan.colors.join(', ')}
     }
   };
 
-  const handlePreview = () => {
-    setShowPreview(true);
+  const handleBuildAndTest = async () => {
+    if (!generationResult || !appPlan) return;
+    
+    setIsBuilding(true);
+    setBuildError(null);
+    
+    try {
+      const response = await fetch('/api/build-flutter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          files: generationResult.files,
+          projectName: appPlan.appName
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setBuildResult(result);
+      } else {
+        setBuildError(result.error || 'فشل في بناء المشروع');
+      }
+    } catch (error) {
+      console.error('Build error:', error);
+      setBuildError('حدث خطأ أثناء بناء المشروع');
+    } finally {
+      setIsBuilding(false);
+    }
+  };
+  
+  const handleTestApp = () => {
+    if (buildResult) {
+      window.open(buildResult.previewUrl, '_blank');
+    }
   };
 
   const toggleFolder = (folder: string) => {
@@ -290,37 +326,76 @@ Primary Colors: ${appPlan.colors.join(', ')}
       </CardContent>
       {isComplete && (
         <CardFooter className="flex flex-col gap-3">
-          <Button className="w-full" onClick={handlePreview}>
-            <Eye className="mr-2 h-4 w-4" />
-            معاينة التطبيق في المحاكي
-          </Button>
-          <Button className="w-full" onClick={handleDownload} disabled={isZipping}>
+          {/* Build Status */}
+          {buildResult && (
+            <div className="w-full p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <div className="flex items-center gap-2 text-green-700 dark:text-green-400 text-sm font-medium">
+                <CheckCircle className="h-4 w-4" />
+                {buildResult.message}
+              </div>
+            </div>
+          )}
+          
+          {buildError && (
+            <div className="w-full p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="text-red-700 dark:text-red-400 text-sm">
+                ❌ {buildError}
+              </div>
+            </div>
+          )}
+          
+          {/* Build and Test Button */}
+          {!buildResult && (
+            <Button 
+              className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700" 
+              onClick={handleBuildAndTest} 
+              disabled={isBuilding}
+            >
+              {isBuilding ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  جاري بناء المشروع...
+                </>
+              ) : (
+                <>
+                  <Hammer className="mr-2 h-4 w-4" />
+                  🚀 بناء واختبار التطبيق
+                </>
+              )}
+            </Button>
+          )}
+          
+          {/* Test Button - only show after successful build */}
+          {buildResult && (
+            <Button 
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700" 
+              onClick={handleTestApp}
+            >
+              <Play className="mr-2 h-4 w-4" />
+              <ExternalLink className="mr-1 h-3 w-3" />
+              جرب تطبيقك الآن
+            </Button>
+          )}
+          
+          {/* Download ZIP */}
+          <Button className="w-full" onClick={handleDownload} disabled={isZipping} variant="outline">
             {isZipping ? (
               <>
                 <Loader className="mr-2 h-4 w-4 animate-spin" />
-                Preparing...
+                جاري التحضير...
               </>
             ) : (
               <>
                 <FileArchive className="mr-2 h-4 w-4" />
-                Download Project ZIP
+                تحميل مشروع ZIP
               </>
             )}
           </Button>
+          
           <Button variant="outline" className="w-full" onClick={onReset}>
-            Create New Project
+            إنشاء مشروع جديد
           </Button>
         </CardFooter>
-      )}
-      
-      {/* Flutter Preview Modal */}
-      {showPreview && generationResult && appPlan && (
-        <FlutterPreview
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
-          generationResult={generationResult}
-          appName={appPlan.appName}
-        />
       )}
     </Card>
   );
