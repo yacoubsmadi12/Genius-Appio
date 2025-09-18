@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+// Security: Sanitize project name to prevent path traversal and command injection
+function sanitizeProjectName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, '_')
+    .replace(/_{2,}/g, '_')
+    .substring(0, 50)
+    .replace(/^_+|_+$/g, '') || 'flutter_project';
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,47 +24,83 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 });
     }
 
-    // Create project directory
-    const projectId = `${projectName || 'flutter_project'}_${Date.now()}`;
-    const projectDir = path.join(process.cwd(), 'temp_projects', projectId);
+    // Create project directory with sanitized name
+    const sanitizedName = sanitizeProjectName(projectName || 'flutter_project');
+    const projectId = `${sanitizedName}_${Date.now()}`;
+    const projectDir = path.resolve(process.cwd(), 'temp_projects', projectId);
     
     // Create project directory
     await fs.mkdir(projectDir, { recursive: true });
     
-    // Write all files to the project directory
+    // Write all files to the project directory with security validation
+    const allowedDirectories = ['lib/', 'assets/', 'test/', 'web/', 'android/', 'ios/'];
+    const allowedFiles = ['pubspec.yaml', 'README.md', 'analysis_options.yaml', '.gitignore'];
+    
     for (const file of files) {
-      const filePath = path.join(projectDir, file.path);
-      const fileDir = path.dirname(filePath);
+      // Security: Validate and normalize file path
+      if (path.isAbsolute(file.path)) {
+        throw new Error(`Absolute paths not allowed: ${file.path}`);
+      }
       
-      // Create directory if it doesn't exist
+      // Normalize path to prevent traversal attacks
+      const normalizedPath = path.normalize(file.path).replace(/^(\.\.[\/\\])+/, '');
+      const resolvedPath = path.resolve(projectDir, normalizedPath);
+      
+      // Ensure the resolved path is within the project directory
+      if (!resolvedPath.startsWith(projectDir + path.sep) && resolvedPath !== projectDir) {
+        throw new Error(`Path traversal attempt detected: ${file.path}`);
+      }
+      
+      // Validate that the file is in an allowed directory or is an allowed root file
+      const isAllowedFile = allowedFiles.includes(normalizedPath) || 
+                           allowedDirectories.some(dir => normalizedPath.startsWith(dir));
+      
+      if (!isAllowedFile) {
+        throw new Error(`File not in allowed directory: ${normalizedPath}`);
+      }
+      
+      // Limit file size (5MB max)
+      if (file.content.length > 5 * 1024 * 1024) {
+        throw new Error(`File too large: ${normalizedPath}`);
+      }
+      
+      const fileDir = path.dirname(resolvedPath);
+      
+      // Create directory if it doesn't exist (ensure it's also within bounds)
+      if (!fileDir.startsWith(projectDir + path.sep) && fileDir !== projectDir) {
+        throw new Error(`Invalid directory path: ${fileDir}`);
+      }
+      
       await fs.mkdir(fileDir, { recursive: true });
       
       // Write file content
-      await fs.writeFile(filePath, file.content, 'utf8');
+      await fs.writeFile(resolvedPath, file.content, 'utf8');
     }
 
     // Check if Flutter is available and build the project
     try {
       // First, check if we have flutter installed
-      await execAsync('flutter --version', { cwd: projectDir });
+      await execFileAsync('flutter', ['--version'], { cwd: projectDir });
       
       // Install dependencies
       console.log('Installing Flutter dependencies...');
-      await execAsync('flutter pub get', { cwd: projectDir });
+      await execFileAsync('flutter', ['pub', 'get'], { cwd: projectDir });
       
       // Build for web
       console.log('Building Flutter web...');
-      const buildResult = await execAsync('flutter build web --release', { cwd: projectDir });
+      await execFileAsync('flutter', ['build', 'web', '--release'], { cwd: projectDir });
       
-      // Copy built files to hosting directory
-      const hostingDir = path.join(process.cwd(), 'public', 'flutter_apps', projectId);
+      // Copy built files to hosting directory using safe fs operations
+      const hostingDir = path.resolve(process.cwd(), 'public', 'flutter_apps', projectId);
       await fs.mkdir(hostingDir, { recursive: true });
       
-      const buildWebDir = path.join(projectDir, 'build', 'web');
-      await execAsync(`cp -r ${buildWebDir}/* ${hostingDir}/`);
+      const buildWebDir = path.resolve(projectDir, 'build', 'web');
       
-      // Clean up temp project
-      await execAsync(`rm -rf ${projectDir}`);
+      // Safe recursive copy using fs operations instead of shell commands
+      await copyDirectory(buildWebDir, hostingDir);
+      
+      // Clean up temp project safely
+      await fs.rm(projectDir, { recursive: true, force: true });
       
       return NextResponse.json({
         success: true,
@@ -73,8 +119,8 @@ export async function POST(request: NextRequest) {
       
       await fs.writeFile(path.join(hostingDir, 'index.html'), htmlPreview);
       
-      // Clean up temp project
-      await execAsync(`rm -rf ${projectDir}`).catch(() => {});
+      // Clean up temp project safely
+      await fs.rm(projectDir, { recursive: true, force: true }).catch(() => {});
       
       return NextResponse.json({
         success: true,
@@ -91,6 +137,28 @@ export async function POST(request: NextRequest) {
       error: 'Failed to build project',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
+  }
+}
+
+// Safe recursive directory copy function
+async function copyDirectory(src: string, dest: string) {
+  try {
+    await fs.mkdir(dest, { recursive: true });
+    const entries = await fs.readdir(src, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+      
+      if (entry.isDirectory()) {
+        await copyDirectory(srcPath, destPath);
+      } else {
+        await fs.copyFile(srcPath, destPath);
+      }
+    }
+  } catch (error) {
+    console.error('Copy directory error:', error);
+    throw error;
   }
 }
 

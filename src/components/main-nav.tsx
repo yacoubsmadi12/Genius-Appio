@@ -8,6 +8,8 @@ import { Card } from "@/components/ui/card";
 
 const routes = [
   { href: "/", label: "Home" },
+  { href: "/builder", label: "🎨 Visual Builder" },
+  { href: "/dashboard", label: "📝 AI Generator" },
   { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact Us" },
