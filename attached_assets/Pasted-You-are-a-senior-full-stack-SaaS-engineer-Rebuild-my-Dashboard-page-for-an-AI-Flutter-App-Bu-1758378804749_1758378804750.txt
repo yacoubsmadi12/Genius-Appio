@@ -1,0 +1,84 @@
+You are a senior full-stack SaaS engineer.  
+Rebuild my **Dashboard page** for an AI Flutter App Builder platform (similar to FlutterFlow).  
+
+### Path
+Generate this file:
+src/app/dashboard/page.tsx
+
+markdown
+Copy code
+
+---
+
+### Requirements
+
+1. **Page Layout**
+- Full width with a 2-column grid:
+  - **Left Sidebar**: "My Projects" list + "+ New Project" button at the top.
+  - **Right Main Area**: workflow steps + preview + logs.
+
+2. **Sidebar**
+- Card at the top: **+ New Project** (big green button).
+- Below: list of Project Cards, each showing:
+  - Project name + created date.
+  - Actions: [Open] [Preview] [Download ZIP].
+  - Use `Card`, `Button`, `Badge` from shadcn/ui.
+
+3. **Workflow Steps (Stepper)**
+- Use vertical stepper (or tabs styled as steps).
+- Steps:
+  1. Prompt → Textarea to enter app description + “Generate Plan” button.
+  2. Planning → Show AI-generated plan (pages, features, backend choice).
+  3. Generation → Show logs while Flutter project is being generated.
+  4. Database → Dropdown (Firebase, Supabase, Node.js).
+  5. Navigation → UI to connect pages + bind button actions.
+  6. Preview → iframe showing `/preview/[projectId]`.
+  7. Complete → Summary card with [Download ZIP] and [Run App].
+
+- Current step is highlighted with accent color (blue or emerald).
+- Completed steps have a checkmark icon (lucide-react).
+
+4. **Main Content Area**
+- Each step displayed inside a `Card` with:
+  - Title
+  - Description
+  - Content (form, logs, preview, or summary)
+  - Action buttons (Next, Back, Regenerate, Save)
+
+5. **Preview Panel**
+- At step "Preview":
+  - Display an iframe (full width, fixed height 500px) loading `/preview/[projectId]`.
+  - Show buttons: [Regenerate], [Save Page].
+
+6. **Logs Panel**
+- At step "Generation":
+  - Show a scrollable code block (`<pre>` styled like terminal).
+  - Update dynamically as logs stream.
+
+7. **Styling**
+- Tailwind + shadcn/ui components.
+- Responsive design.
+- Dark/light mode supported.
+- Sidebar width ~280px, content flexible.
+- Accent color: emerald.
+
+8. **State**
+- `projects: {id, name, createdAt}[]`
+- `currentProject: Project | null`
+- `currentStep: WorkflowStep`
+- `logs: string[]`
+- `appPlan: { appName, description, pages, features, backend } | null`
+
+9. **Integration Points (placeholders)**
+- "+ New Project" → call `/api/projects`.
+- "Generate Plan" → call `/api/projects/:id/plan`.
+- "Generate Page" → call `/api/projects/:id/pages`.
+- "Build Preview" → call `/api/projects/:id/build`.
+- "Download ZIP" → link `/download/:id.zip`.
+
+---
+
+### Output
+Write the full **TypeScript React component** for the Dashboard page using Tailwind + shadcn/ui.  
+It must be production-ready, with Sidebar + Stepper + Preview + Logs.  
+Do not output explanations, only code.
