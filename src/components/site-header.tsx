@@ -70,9 +70,6 @@ export function SiteHeader() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
               <Link href="/account">Account</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -144,9 +141,6 @@ export function SiteHeader() {
                  <div className="flex flex-col space-y-2 pt-4 border-t">
                     {user ? (
                       <>
-                        <SheetClose asChild>
-                          <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">Dashboard</Link>
-                        </SheetClose>
                         <SheetClose asChild>
                           <Link href="/account" className="text-muted-foreground transition-colors hover:text-foreground">Account</Link>
                         </SheetClose>
