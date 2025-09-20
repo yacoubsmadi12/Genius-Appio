@@ -69,9 +69,6 @@ export default function Home() {
     }
   };
 
-  const handleBuilderClick = () => {
-    router.push('/builder');
-  };
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -88,49 +85,12 @@ export default function Home() {
                 <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground">
                   Welcome to <span className="font-semibold text-foreground">Genius APPio</span>. Describe your app, and we'll generate the code. No-code simplicity, pro-code power.
                 </p>
-                <div className="mt-6 md:mt-8 flex flex-col gap-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative"
-                    >
-                      <Button 
-                        size="lg" 
-                        className="w-full font-semibold relative z-10 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                        onClick={handleBuilderClick}
-                      >
-                        🎨 Visual Builder
-                      </Button>
-                      <motion.div 
-                        className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur-lg opacity-75 animate-pulse -z-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.75 }}
-                        transition={{ duration: 1, repeat: Infinity, repeatType: "mirror" }}
-                      />
-                    </motion.div>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative"
-                    >
-                      <Button 
-                        size="lg" 
-                        variant="outline" 
-                        className="w-full font-semibold border-2 hover:bg-primary hover:text-primary-foreground"
-                        onClick={handleDashboardClick}
-                      >
-                        📝 AI Generator
-                      </Button>
-                    </motion.div>
-                  </div>
-                  <div className="flex justify-center">
-                    <Button asChild size="lg" variant="ghost" className="font-semibold">
-                      <Link href="/signup">
-                        Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
-                      </Link>
-                    </Button>
-                  </div>
+                <div className="mt-6 md:mt-8 flex justify-center">
+                  <Button asChild size="lg" variant="ghost" className="font-semibold">
+                    <Link href="/signup">
+                      Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
                 </div>
               </div>
               <div className="hidden lg:block">
