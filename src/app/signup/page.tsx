@@ -71,7 +71,7 @@ export default function SignupPage() {
         title: "Account Created!",
         description: "You have been successfully signed up.",
       });
-      router.push("/dashboard");
+      router.push("/account");
     } catch (error: any) {
       console.error(error);
       toast({

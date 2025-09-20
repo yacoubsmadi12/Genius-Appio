@@ -63,7 +63,7 @@ export default function Home() {
 
   const handleDashboardClick = () => {
     if (user) {
-      router.push('/dashboard');
+      router.push('/account');
     } else {
       router.push('/login');
     }

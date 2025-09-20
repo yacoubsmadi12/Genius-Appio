@@ -67,7 +67,7 @@ export default function LoginPage() {
         title: "Login Successful!",
         description: "Welcome back.",
       });
-      router.push("/dashboard");
+      router.push("/account");
     } catch (error: any) {
       console.error(error);
       toast({
