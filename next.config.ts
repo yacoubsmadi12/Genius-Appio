@@ -54,11 +54,13 @@ const nextConfig: NextConfig = {
   // Allow all dev origins for Replit proxy system
   allowedDevOrigins: [
     'https://db7016c2-bd95-4aa0-9f97-c4ba5ae5234b-00-2yxopmjd3x67h.riker.replit.dev',
+    'https://3d2337df-b3cf-404d-8274-580a96c24231-00-2badse7d0ow6.sisko.replit.dev',
     'https://*.spock.replit.dev',
-    'https://*.worf.replit.dev',
+    'https://*.worf.replit.dev', 
     'https://*.riker.replit.dev',
+    'https://*.sisko.replit.dev',
     'https://*.replit.dev',
-    'https://*.replit.app', 
+    'https://*.replit.app',
     'https://*.replit.com',
     'http://localhost:5000',
     'http://127.0.0.1:5000',
