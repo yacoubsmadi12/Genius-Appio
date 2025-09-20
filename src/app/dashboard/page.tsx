@@ -180,6 +180,7 @@ export default function DashboardPage() {
   const [pagePrompt, setPagePrompt] = useState("");
   const [pageName, setPageName] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [deletePageId, setDeletePageId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Fix hydration issues
@@ -235,24 +236,25 @@ export default function DashboardPage() {
 
     setIsGenerating(true);
     try {
-      // Simulate AI generation (replace with actual AI call later)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Generate page based on prompt analysis
-      const generatedWidgets = generateWidgetsFromPrompt(pagePrompt);
-      
-      // Create stable ID for SSR compatibility
-      const pageNumber = currentProject.pages.length + 1;
-      const pageId = `ai_page_${pageNumber}`;
-      
-      const newPage: AppPage = {
-        id: pageId,
-        name: pageName,
-        type: "screen",
-        route: `/${pageName.toLowerCase().replace(/\\s+/g, '')}`,
-        createdAt: new Date().toISOString().split('T')[0],
-        widgets: generatedWidgets
-      };
+      // Call the real Gemini AI API
+      const response = await fetch('/api/generate-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pageName,
+          prompt: pagePrompt
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to generate page');
+      }
+
+      const data = await response.json();
+      const newPage: AppPage = data.page;
       
       const updatedProject = {
         ...currentProject,
@@ -275,174 +277,65 @@ export default function DashboardPage() {
       toast({
         variant: "destructive",
         title: "خطأ في الإنشاء",
-        description: "حدث خطأ أثناء إنشاء الصفحة. يرجى المحاولة مرة أخرى."
+        description: error instanceof Error ? error.message : "حدث خطأ أثناء إنشاء الصفحة. يرجى المحاولة مرة أخرى."
       });
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // Function to generate widgets based on prompt (enhanced AI logic)
-  const generateWidgetsFromPrompt = (prompt: string): Widget[] => {
-    const lowerPrompt = prompt.toLowerCase();
+  // Handle page deletion
+  const handleDeletePage = (pageId: string) => {
+    setDeletePageId(pageId);
+  };
+
+  const confirmDeletePage = () => {
+    if (!deletePageId) return;
     
-    // Create stable widget counter using hash-like approach for SSR compatibility
-    const pageNumber = currentProject.pages.length + 1;
-    let widgetCounter = pageNumber * 1000;
-    
-    // Analyze prompt to determine page type and content
-    const isLoginPage = lowerPrompt.includes('login') || lowerPrompt.includes('sign in') || lowerPrompt.includes('دخول');
-    const isProfilePage = lowerPrompt.includes('profile') || lowerPrompt.includes('user') || lowerPrompt.includes('ملف');
-    const isSettingsPage = lowerPrompt.includes('settings') || lowerPrompt.includes('إعدادات');
-    
-    if (isLoginPage) {
-      return [
-        {
-          id: `w_${widgetCounter++}`,
-          type: "column",
-          properties: { padding: 24, alignment: "center" },
-          children: [
-            {
-              id: `w_${widgetCounter++}`,
-              type: "text",
-              properties: {
-                text: "تسجيل الدخول",
-                fontSize: 28,
-                fontWeight: "bold",
-                color: "#2563eb"
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "container",
-              properties: {
-                height: 50,
-                backgroundColor: "#f8fafc",
-                borderRadius: 8
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "button",
-              properties: {
-                text: "دخول",
-                backgroundColor: "#2563eb",
-                textColor: "#ffffff",
-                padding: 16
-              }
-            }
-          ]
-        }
-      ];
-    } else if (isProfilePage) {
-      return [
-        {
-          id: `w_${widgetCounter++}`,
-          type: "column",
-          properties: { padding: 20, alignment: "center" },
-          children: [
-            {
-              id: `w_${widgetCounter++}`,
-              type: "container",
-              properties: {
-                height: 100,
-                backgroundColor: "#e2e8f0",
-                borderRadius: 50
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "text",
-              properties: {
-                text: "الملف الشخصي",
-                fontSize: 24,
-                fontWeight: "bold",
-                color: "#1e293b"
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "button",
-              properties: {
-                text: "تعديل الملف الشخصي",
-                backgroundColor: "#059669",
-                textColor: "#ffffff",
-                padding: 12
-              }
-            }
-          ]
-        }
-      ];
-    } else if (isSettingsPage) {
-      return [
-        {
-          id: `w_${widgetCounter++}`,
-          type: "column",
-          properties: { padding: 16, alignment: "flex-start" },
-          children: [
-            {
-              id: `w_${widgetCounter++}`,
-              type: "text",
-              properties: {
-                text: "الإعدادات",
-                fontSize: 24,
-                fontWeight: "bold",
-                color: "#1e293b"
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "container",
-              properties: {
-                height: 60,
-                backgroundColor: "#f1f5f9",
-                borderRadius: 8
-              }
-            }
-          ]
-        }
-      ];
-    } else {
-      // Generic page based on prompt
-      return [
-        {
-          id: `w_${widgetCounter++}`,
-          type: "column",
-          properties: { padding: 20, alignment: "center" },
-          children: [
-            {
-              id: `w_${widgetCounter++}`,
-              type: "text",
-              properties: {
-                text: "صفحة مخصصة",
-                fontSize: 26,
-                fontWeight: "bold",
-                color: "#2563eb"
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "text",
-              properties: {
-                text: "تم إنشاء هذه الصفحة باستخدام الذكاء الاصطناعي",
-                fontSize: 16,
-                color: "#64748b"
-              }
-            },
-            {
-              id: `w_${widgetCounter++}`,
-              type: "button",
-              properties: {
-                text: "ابدأ الآن",
-                backgroundColor: "#7c3aed",
-                textColor: "#ffffff",
-                padding: 14
-              }
-            }
-          ]
-        }
-      ];
+    const pageToDelete = currentProject.pages.find(page => page.id === deletePageId);
+    if (!pageToDelete) {
+      setDeletePageId(null);
+      return;
     }
+
+    // Prevent deleting the last page
+    if (currentProject.pages.length === 1) {
+      toast({
+        variant: "destructive",
+        title: "لا يمكن الحذف",
+        description: "لا يمكن حذف الصفحة الأخيرة في المشروع. يجب أن يحتوي المشروع على صفحة واحدة على الأقل."
+      });
+      setDeletePageId(null);
+      return;
+    }
+
+    const updatedPages = currentProject.pages.filter(page => page.id !== deletePageId);
+    
+    // If deleted page was selected, select another page intelligently
+    let newSelectedPage = selectedPage;
+    if (selectedPage.id === deletePageId) {
+      // Find the next page in the list, or the previous one if it was the last
+      const currentIndex = currentProject.pages.findIndex(page => page.id === deletePageId);
+      if (currentIndex < updatedPages.length) {
+        newSelectedPage = updatedPages[currentIndex];
+      } else if (updatedPages.length > 0) {
+        newSelectedPage = updatedPages[updatedPages.length - 1];
+      }
+    }
+    
+    const updatedProject = {
+      ...currentProject,
+      pages: updatedPages
+    };
+    
+    setCurrentProject(updatedProject);
+    setSelectedPage(newSelectedPage);
+    setDeletePageId(null);
+    
+    toast({
+      title: "تم حذف الصفحة",
+      description: `تم حذف صفحة "${pageToDelete.name}" بنجاح.`
+    });
   };
 
   const generatePageCode = (page: AppPage): string => {
@@ -462,13 +355,25 @@ export default function DashboardPage() {
         
         case "container":
           return `${spaces}Container(\n${spaces}  height: ${widget.properties.height || 100},\n${spaces}  decoration: BoxDecoration(\n${spaces}    color: Color(0xFF${widget.properties.backgroundColor?.replace('#', '') || 'f3f4f6'}),\n${spaces}    borderRadius: BorderRadius.circular(${widget.properties.borderRadius || 0}),\n${spaces}  ),\n${spaces})`;
+
+        case "row":
+          const rowChildren = widget.children?.map(child => generateWidgetCode(child, indent + 2)).join(',\n') || '';
+          return `${spaces}Row(\n${spaces}  children: [\n${rowChildren}\n${spaces}  ],\n${spaces})`;
+
+        case "image":
+          return `${spaces}Container(\n${spaces}  height: ${widget.properties.height || 200},\n${spaces}  width: ${widget.properties.width || 200},\n${spaces}  decoration: BoxDecoration(\n${spaces}    color: Colors.grey[300],\n${spaces}    borderRadius: BorderRadius.circular(${widget.properties.borderRadius || 0}),\n${spaces}  ),\n${spaces}  child: Icon(\n${spaces}    Icons.image,\n${spaces}    size: 48,\n${spaces}    color: Colors.grey[600],\n${spaces}  ),\n${spaces})`;
         
         default:
-          return `${spaces}Container()`;
+          return `${spaces}Container(\n${spaces}  child: Text('Unknown widget: ${widget.type}'),\n${spaces})`;
       }
     };
 
-    const widgetsCode = page.widgets.map(widget => generateWidgetCode(widget, 6)).join(',\n');
+    const widgetsCode = page.widgets.map(widget => generateWidgetCode(widget, 8)).join(',\n');
+
+    // Always wrap multiple widgets in a Column to ensure valid Dart code
+    const bodyContent = page.widgets.length === 1 
+      ? widgetsCode 
+      : `Column(\n        children: [\n${widgetsCode}\n        ],\n      )`;
 
     return `import 'package:flutter/material.dart';
 
@@ -482,7 +387,7 @@ class ${page.name} extends StatelessWidget {
         title: Text('${page.name.replace('Page', '')}'),
       ),
       body: SafeArea(
-        child: ${widgetsCode}
+        child: ${bodyContent}
       ),
     );
   }
@@ -574,9 +479,58 @@ class ${page.name} extends StatelessWidget {
             Container
           </div>
         );
+
+      case "row":
+        return (
+          <div 
+            key={widget.id}
+            className={`flex flex-row items-center space-x-2 p-2 cursor-pointer transition-all ${
+              isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+            }`}
+            onClick={handleWidgetClick}
+            style={{ padding: widget.properties.padding || 8 }}
+          >
+            {widget.children?.map(child => renderWidgetPreview(child))}
+          </div>
+        );
+
+      case "image":
+        return (
+          <div
+            key={widget.id}
+            className={`cursor-pointer transition-all ${
+              isSelected ? 'ring-2 ring-blue-500' : 'hover:opacity-80'
+            }`}
+            onClick={handleWidgetClick}
+            style={{
+              height: widget.properties.height || 200,
+              width: widget.properties.width || 200,
+              backgroundColor: '#e5e7eb',
+              borderRadius: widget.properties.borderRadius || 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: '#666',
+              backgroundImage: 'url("data:image/svg+xml,%3csvg width=\'100%25\' height=\'100%25\' xmlns=\'http://www.w3.org/2000/svg\'%3e%3crect width=\'100%25\' height=\'100%25\' fill=\'none\' stroke=\'%23d1d5db\' stroke-width=\'2\' stroke-dasharray=\'6%2c 14\' stroke-dashoffset=\'0\' stroke-linecap=\'square\'/%3e%3c/svg%3e")'
+            }}
+          >
+            📷 Image
+          </div>
+        );
       
       default:
-        return null;
+        return (
+          <div
+            key={widget.id}
+            className={`cursor-pointer transition-all p-2 bg-yellow-50 border border-yellow-200 ${
+              isSelected ? 'ring-2 ring-blue-500' : 'hover:bg-yellow-100'
+            }`}
+            onClick={handleWidgetClick}
+          >
+            <span className="text-xs text-yellow-600">Unknown: {widget.type}</span>
+          </div>
+        );
     }
   };
 
@@ -711,7 +665,13 @@ class ${page.name} extends StatelessWidget {
                         <RefreshCw className="h-4 w-4 mr-2" />
                         إعادة توليد بالذكاء الاصطناعي
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePage(page.id);
+                        }}
+                      >
                         <Trash2 className="h-4 w-4 mr-2" />
                         حذف
                       </DropdownMenuItem>
@@ -930,6 +890,36 @@ class ${page.name} extends StatelessWidget {
           )}
         </ScrollArea>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deletePageId !== null} onOpenChange={() => setDeletePageId(null)}>
+        <DialogContent className="sm:max-w-[425px]" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="h-5 w-5" />
+              تأكيد حذف الصفحة
+            </DialogTitle>
+            <DialogDescription>
+              {deletePageId && currentProject.pages.find(p => p.id === deletePageId) && (
+                <>
+                  هل أنت متأكد من حذف صفحة "{currentProject.pages.find(p => p.id === deletePageId)?.name}"؟
+                  <br />
+                  لا يمكن التراجع عن هذا الإجراء.
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDeletePageId(null)}>
+              إلغاء
+            </Button>
+            <Button variant="destructive" onClick={confirmDeletePage}>
+              <Trash2 className="mr-2 h-4 w-4" />
+              حذف الصفحة
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
