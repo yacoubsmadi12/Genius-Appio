@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +69,7 @@ interface Project {
 }
 
 export default function DashboardPage() {
+  const [mounted, setMounted] = useState(false);
   const [currentProject, setCurrentProject] = useState<Project>({
     id: "1",
     name: "My Flutter App",
@@ -181,21 +182,27 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
+  // Fix hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleAddPage = () => {
+    const pageNumber = currentProject.pages.length + 1;
     const newPage: AppPage = {
-      id: `page_${Date.now()}`,
-      name: `NewPage${currentProject.pages.length + 1}`,
+      id: `page_${pageNumber}`,
+      name: `NewPage${pageNumber}`,
       type: "screen",
-      route: `/page${currentProject.pages.length + 1}`,
+      route: `/page${pageNumber}`,
       createdAt: new Date().toISOString().split('T')[0],
       widgets: [
         {
-          id: `w_${Date.now()}`,
+          id: `w_page_${pageNumber}_1`,
           type: "column",
           properties: { padding: 16, alignment: "center" },
           children: [
             {
-              id: `w_${Date.now() + 1}`,
+              id: `w_page_${pageNumber}_2`,
               type: "text",
               properties: {
                 text: "New Page",
@@ -235,7 +242,8 @@ export default function DashboardPage() {
       const generatedWidgets = generateWidgetsFromPrompt(pagePrompt);
       
       // Create stable ID for SSR compatibility
-      const pageId = `ai_page_${currentProject.pages.length + 1}`;
+      const pageNumber = currentProject.pages.length + 1;
+      const pageId = `ai_page_${pageNumber}`;
       
       const newPage: AppPage = {
         id: pageId,
@@ -279,7 +287,8 @@ export default function DashboardPage() {
     const lowerPrompt = prompt.toLowerCase();
     
     // Create stable widget counter using hash-like approach for SSR compatibility
-    let widgetCounter = lowerPrompt.length * 100;
+    const pageNumber = currentProject.pages.length + 1;
+    let widgetCounter = pageNumber * 1000;
     
     // Analyze prompt to determine page type and content
     const isLoginPage = lowerPrompt.includes('login') || lowerPrompt.includes('sign in') || lowerPrompt.includes('دخول');
@@ -570,6 +579,18 @@ class ${page.name} extends StatelessWidget {
         return null;
     }
   };
+
+  // Prevent hydration mismatch by only showing full content after client-side mount
+  if (!mounted) {
+    return (
+      <div className="flex h-screen bg-background items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">جار التحميل...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-background">
