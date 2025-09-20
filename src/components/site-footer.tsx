@@ -1,9 +1,17 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "./ui/button";
 
 export function SiteFooter() {
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
   return (
     <footer className="w-full border-t bg-background">
       <div className="container py-8">
@@ -33,7 +41,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-8 flex flex-col items-center justify-between border-t pt-6 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Genius APPio. All rights reserved.
+            &copy; {currentYear || new Date().getFullYear()} Genius APPio. All rights reserved.
           </p>
           <div className="mt-4 flex items-center space-x-2 sm:mt-0">
             <Button variant="ghost" size="icon" asChild>
