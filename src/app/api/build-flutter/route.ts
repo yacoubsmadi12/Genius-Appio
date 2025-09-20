@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     
     // Write all files to the project directory with security validation
     const allowedDirectories = ['lib/', 'assets/', 'test/', 'web/', 'android/', 'ios/'];
-    const allowedFiles = ['pubspec.yaml', 'README.md', 'analysis_options.yaml', '.gitignore'];
+    const allowedFiles = ['pubspec.yaml', 'README.md', 'analysis_options.yaml', '.gitignore', '.metadata'];
     
     for (const file of files) {
       // Security: Validate and normalize file path
