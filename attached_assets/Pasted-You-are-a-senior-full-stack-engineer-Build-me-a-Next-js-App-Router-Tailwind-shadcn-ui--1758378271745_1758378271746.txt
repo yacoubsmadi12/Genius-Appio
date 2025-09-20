@@ -1,0 +1,64 @@
+You are a senior full-stack engineer.  
+Build me a **Next.js (App Router) + Tailwind + shadcn/ui** Dashboard page for my AI App Builder platform (similar to FlutterFlow).
+
+### Path
+Generate this file:
+src/app/dashboard/page.tsx
+
+markdown
+Copy code
+
+---
+
+### Requirements
+
+1. **Layout**
+- Use a clean 2-column layout with a **Sidebar** and **Main Content**.
+- Sidebar:
+  - Show "My Projects" list (project cards with name, created date, buttons).
+  - A **"+ New Project" button** at the top to create a new Flutter project.
+- Main Content:
+  - Multi-step Workflow displayed as tabs or stepper.
+
+2. **Workflow Steps**
+The steps should appear in order with clear navigation:
+- **Prompt** → text input for app description (e.g. “Create a login page”).
+- **Planning** → show AI-generated app plan (pages, features, backend choice).
+- **Page Generation** → show logs while Flutter code is generated.
+- **Database** → dropdown to choose backend (Firebase, Supabase, Node.js).
+- **Navigation/Actions** → UI to bind buttons → pages or CRUD actions.
+- **Preview** → iframe displaying `/preview/[projectId]`.
+- **Complete** → summary with **Download ZIP** and **Run App** buttons.
+
+3. **Components**
+- Use shadcn/ui components (`Card`, `Button`, `Tabs`, `Badge`, `Input`, `Textarea`).
+- Sidebar projects list should be in Cards with “Open”, “Preview”, “Download” actions.
+- Main Workflow:
+  - Tabs or Stepper (highlight current step).
+  - Each step content inside a `Card` with title, description, actions.
+- Logs panel: scrollable `pre` element styled like terminal.
+
+4. **State Management**
+- `projects: {id, name, createdAt}[]`
+- `currentProject: Project | null`
+- `currentStep: "prompt" | "planning" | "generation" | "database" | "navigation" | "preview" | "complete"`
+- `appPlan: { appName, description, pages, features, backend } | null`
+- `generationLogs: string[]`
+
+5. **Styling**
+- Professional, modern, minimalistic.
+- Tailwind spacing, rounded corners, shadows.
+- Dark/light theme toggle.
+- Accent color: blue or emerald.
+
+6. **Integration Points (placeholders)**
+- When user clicks “New Project” → call API `POST /api/projects`.
+- When user submits Prompt → call API `POST /api/projects/:id/pages`.
+- When reaching Preview step → load iframe from `/preview/[projectId]`.
+- When clicking Download → link `/download/[projectId].zip`.
+
+---
+
+### Output
+Generate a complete **TypeScript React component** for the Dashboard page, production-ready, using Tailwind + shadcn/ui.  
+Do not output explanations, only the full code.
