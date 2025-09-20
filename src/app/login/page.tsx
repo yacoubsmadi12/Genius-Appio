@@ -64,10 +64,10 @@ export default function LoginPage() {
     try {
       await signIn(values.email, values.password);
       toast({
-        title: "Login Successful!",
-        description: "Welcome back.",
+        title: "تم تسجيل الدخول بنجاح!",
+        description: "مرحباً بك مرة أخرى.",
       });
-      router.push("/account");
+      router.push("/dashboard");
     } catch (error: any) {
       console.error(error);
       toast({

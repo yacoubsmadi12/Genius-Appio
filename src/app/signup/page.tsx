@@ -68,10 +68,10 @@ export default function SignupPage() {
     try {
       await signUp(values.email, values.password, values.name);
       toast({
-        title: "Account Created!",
-        description: "You have been successfully signed up.",
+        title: "تم إنشاء الحساب بنجاح!",
+        description: "مرحباً بك في منصتنا.",
       });
-      router.push("/account");
+      router.push("/dashboard");
     } catch (error: any) {
       console.error(error);
       toast({
