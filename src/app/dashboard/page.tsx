@@ -234,8 +234,11 @@ export default function DashboardPage() {
       // Generate page based on prompt analysis
       const generatedWidgets = generateWidgetsFromPrompt(pagePrompt);
       
+      // Create stable ID for SSR compatibility
+      const pageId = `ai_page_${currentProject.pages.length + 1}`;
+      
       const newPage: AppPage = {
-        id: `ai_page_${Date.now()}`,
+        id: pageId,
         name: pageName,
         type: "screen",
         route: `/${pageName.toLowerCase().replace(/\\s+/g, '')}`,
@@ -275,6 +278,9 @@ export default function DashboardPage() {
   const generateWidgetsFromPrompt = (prompt: string): Widget[] => {
     const lowerPrompt = prompt.toLowerCase();
     
+    // Create stable widget counter using hash-like approach for SSR compatibility
+    let widgetCounter = lowerPrompt.length * 100;
+    
     // Analyze prompt to determine page type and content
     const isLoginPage = lowerPrompt.includes('login') || lowerPrompt.includes('sign in') || lowerPrompt.includes('دخول');
     const isProfilePage = lowerPrompt.includes('profile') || lowerPrompt.includes('user') || lowerPrompt.includes('ملف');
@@ -283,12 +289,12 @@ export default function DashboardPage() {
     if (isLoginPage) {
       return [
         {
-          id: `w_${Date.now()}`,
+          id: `w_${widgetCounter++}`,
           type: "column",
           properties: { padding: 24, alignment: "center" },
           children: [
             {
-              id: `w_${Date.now() + 1}`,
+              id: `w_${widgetCounter++}`,
               type: "text",
               properties: {
                 text: "تسجيل الدخول",
@@ -298,7 +304,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 2}`,
+              id: `w_${widgetCounter++}`,
               type: "container",
               properties: {
                 height: 50,
@@ -307,7 +313,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 3}`,
+              id: `w_${widgetCounter++}`,
               type: "button",
               properties: {
                 text: "دخول",
@@ -322,12 +328,12 @@ export default function DashboardPage() {
     } else if (isProfilePage) {
       return [
         {
-          id: `w_${Date.now()}`,
+          id: `w_${widgetCounter++}`,
           type: "column",
           properties: { padding: 20, alignment: "center" },
           children: [
             {
-              id: `w_${Date.now() + 1}`,
+              id: `w_${widgetCounter++}`,
               type: "container",
               properties: {
                 height: 100,
@@ -336,7 +342,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 2}`,
+              id: `w_${widgetCounter++}`,
               type: "text",
               properties: {
                 text: "الملف الشخصي",
@@ -346,7 +352,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 3}`,
+              id: `w_${widgetCounter++}`,
               type: "button",
               properties: {
                 text: "تعديل الملف الشخصي",
@@ -361,12 +367,12 @@ export default function DashboardPage() {
     } else if (isSettingsPage) {
       return [
         {
-          id: `w_${Date.now()}`,
+          id: `w_${widgetCounter++}`,
           type: "column",
           properties: { padding: 16, alignment: "flex-start" },
           children: [
             {
-              id: `w_${Date.now() + 1}`,
+              id: `w_${widgetCounter++}`,
               type: "text",
               properties: {
                 text: "الإعدادات",
@@ -376,7 +382,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 2}`,
+              id: `w_${widgetCounter++}`,
               type: "container",
               properties: {
                 height: 60,
@@ -391,12 +397,12 @@ export default function DashboardPage() {
       // Generic page based on prompt
       return [
         {
-          id: `w_${Date.now()}`,
+          id: `w_${widgetCounter++}`,
           type: "column",
           properties: { padding: 20, alignment: "center" },
           children: [
             {
-              id: `w_${Date.now() + 1}`,
+              id: `w_${widgetCounter++}`,
               type: "text",
               properties: {
                 text: "صفحة مخصصة",
@@ -406,7 +412,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 2}`,
+              id: `w_${widgetCounter++}`,
               type: "text",
               properties: {
                 text: "تم إنشاء هذه الصفحة باستخدام الذكاء الاصطناعي",
@@ -415,7 +421,7 @@ export default function DashboardPage() {
               }
             },
             {
-              id: `w_${Date.now() + 3}`,
+              id: `w_${widgetCounter++}`,
               type: "button",
               properties: {
                 text: "ابدأ الآن",
