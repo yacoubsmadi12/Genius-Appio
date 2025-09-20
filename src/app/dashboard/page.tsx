@@ -22,7 +22,10 @@ import {
   Copy,
   Edit3,
   Play,
-  Download
+  Download,
+  Sparkles,
+  RefreshCw,
+  Loader2
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -30,6 +33,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface AppPage {
   id: string;
@@ -55,7 +69,7 @@ interface Project {
 }
 
 export default function DashboardPage() {
-  const [currentProject] = useState<Project>({
+  const [currentProject, setCurrentProject] = useState<Project>({
     id: "1",
     name: "My Flutter App",
     pages: [
@@ -161,6 +175,11 @@ export default function DashboardPage() {
   const [selectedPage, setSelectedPage] = useState<AppPage>(currentProject.pages[0]);
   const [selectedWidget, setSelectedWidget] = useState<Widget | null>(null);
   const [activeTab, setActiveTab] = useState<"design" | "code">("design");
+  const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
+  const [pagePrompt, setPagePrompt] = useState("");
+  const [pageName, setPageName] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
 
   const handleAddPage = () => {
     const newPage: AppPage = {
@@ -189,8 +208,226 @@ export default function DashboardPage() {
       ]
     };
     
-    currentProject.pages.push(newPage);
+    const updatedProject = {
+      ...currentProject,
+      pages: [...currentProject.pages, newPage]
+    };
+    setCurrentProject(updatedProject);
     setSelectedPage(newPage);
+  };
+
+  const handleGeneratePageWithAI = async () => {
+    if (!pagePrompt.trim() || !pageName.trim()) {
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "يرجى إدخال اسم الصفحة والوصف المطلوب."
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      // Simulate AI generation (replace with actual AI call later)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Generate page based on prompt analysis
+      const generatedWidgets = generateWidgetsFromPrompt(pagePrompt);
+      
+      const newPage: AppPage = {
+        id: `ai_page_${Date.now()}`,
+        name: pageName,
+        type: "screen",
+        route: `/${pageName.toLowerCase().replace(/\\s+/g, '')}`,
+        createdAt: new Date().toISOString().split('T')[0],
+        widgets: generatedWidgets
+      };
+      
+      const updatedProject = {
+        ...currentProject,
+        pages: [...currentProject.pages, newPage]
+      };
+      setCurrentProject(updatedProject);
+      setSelectedPage(newPage);
+      
+      // Reset form
+      setPagePrompt("");
+      setPageName("");
+      setIsAIDialogOpen(false);
+      
+      toast({
+        title: "تم إنشاء الصفحة بنجاح!",
+        description: `تم إنشاء صفحة "${pageName}" باستخدام الذكاء الاصطناعي.`
+      });
+    } catch (error) {
+      console.error('Error generating page:', error);
+      toast({
+        variant: "destructive",
+        title: "خطأ في الإنشاء",
+        description: "حدث خطأ أثناء إنشاء الصفحة. يرجى المحاولة مرة أخرى."
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Function to generate widgets based on prompt (enhanced AI logic)
+  const generateWidgetsFromPrompt = (prompt: string): Widget[] => {
+    const lowerPrompt = prompt.toLowerCase();
+    
+    // Analyze prompt to determine page type and content
+    const isLoginPage = lowerPrompt.includes('login') || lowerPrompt.includes('sign in') || lowerPrompt.includes('دخول');
+    const isProfilePage = lowerPrompt.includes('profile') || lowerPrompt.includes('user') || lowerPrompt.includes('ملف');
+    const isSettingsPage = lowerPrompt.includes('settings') || lowerPrompt.includes('إعدادات');
+    
+    if (isLoginPage) {
+      return [
+        {
+          id: `w_${Date.now()}`,
+          type: "column",
+          properties: { padding: 24, alignment: "center" },
+          children: [
+            {
+              id: `w_${Date.now() + 1}`,
+              type: "text",
+              properties: {
+                text: "تسجيل الدخول",
+                fontSize: 28,
+                fontWeight: "bold",
+                color: "#2563eb"
+              }
+            },
+            {
+              id: `w_${Date.now() + 2}`,
+              type: "container",
+              properties: {
+                height: 50,
+                backgroundColor: "#f8fafc",
+                borderRadius: 8
+              }
+            },
+            {
+              id: `w_${Date.now() + 3}`,
+              type: "button",
+              properties: {
+                text: "دخول",
+                backgroundColor: "#2563eb",
+                textColor: "#ffffff",
+                padding: 16
+              }
+            }
+          ]
+        }
+      ];
+    } else if (isProfilePage) {
+      return [
+        {
+          id: `w_${Date.now()}`,
+          type: "column",
+          properties: { padding: 20, alignment: "center" },
+          children: [
+            {
+              id: `w_${Date.now() + 1}`,
+              type: "container",
+              properties: {
+                height: 100,
+                backgroundColor: "#e2e8f0",
+                borderRadius: 50
+              }
+            },
+            {
+              id: `w_${Date.now() + 2}`,
+              type: "text",
+              properties: {
+                text: "الملف الشخصي",
+                fontSize: 24,
+                fontWeight: "bold",
+                color: "#1e293b"
+              }
+            },
+            {
+              id: `w_${Date.now() + 3}`,
+              type: "button",
+              properties: {
+                text: "تعديل الملف الشخصي",
+                backgroundColor: "#059669",
+                textColor: "#ffffff",
+                padding: 12
+              }
+            }
+          ]
+        }
+      ];
+    } else if (isSettingsPage) {
+      return [
+        {
+          id: `w_${Date.now()}`,
+          type: "column",
+          properties: { padding: 16, alignment: "flex-start" },
+          children: [
+            {
+              id: `w_${Date.now() + 1}`,
+              type: "text",
+              properties: {
+                text: "الإعدادات",
+                fontSize: 24,
+                fontWeight: "bold",
+                color: "#1e293b"
+              }
+            },
+            {
+              id: `w_${Date.now() + 2}`,
+              type: "container",
+              properties: {
+                height: 60,
+                backgroundColor: "#f1f5f9",
+                borderRadius: 8
+              }
+            }
+          ]
+        }
+      ];
+    } else {
+      // Generic page based on prompt
+      return [
+        {
+          id: `w_${Date.now()}`,
+          type: "column",
+          properties: { padding: 20, alignment: "center" },
+          children: [
+            {
+              id: `w_${Date.now() + 1}`,
+              type: "text",
+              properties: {
+                text: "صفحة مخصصة",
+                fontSize: 26,
+                fontWeight: "bold",
+                color: "#2563eb"
+              }
+            },
+            {
+              id: `w_${Date.now() + 2}`,
+              type: "text",
+              properties: {
+                text: "تم إنشاء هذه الصفحة باستخدام الذكاء الاصطناعي",
+                fontSize: 16,
+                color: "#64748b"
+              }
+            },
+            {
+              id: `w_${Date.now() + 3}`,
+              type: "button",
+              properties: {
+                text: "ابدأ الآن",
+                backgroundColor: "#7c3aed",
+                textColor: "#ffffff",
+                padding: 14
+              }
+            }
+          ]
+        }
+      ];
+    }
   };
 
   const generatePageCode = (page: AppPage): string => {
@@ -339,10 +576,76 @@ class ${page.name} extends StatelessWidget {
         
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-medium">Pages</h3>
-            <Button size="sm" onClick={handleAddPage} className="h-8 w-8 p-0">
-              <Plus className="h-4 w-4" />
-            </Button>
+            <h3 className="font-medium">صفحات التطبيق</h3>
+            <div className="flex gap-1">
+              <Button size="sm" onClick={handleAddPage} className="h-8 w-8 p-0" title="إضافة صفحة فارغة">
+                <Plus className="h-4 w-4" />
+              </Button>
+              <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="h-8 w-8 p-0 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600" title="إنشاء صفحة بالذكاء الاصطناعي">
+                    <Sparkles className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[525px]" dir="rtl">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-purple-500" />
+                      إنشاء صفحة بالذكاء الاصطناعي
+                    </DialogTitle>
+                    <DialogDescription>
+                      اكتب وصفاً للصفحة التي تريد إنشاءها وسيقوم الذكاء الاصطناعي بإنشائها لك
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="page-name" className="text-right">
+                        اسم الصفحة
+                      </Label>
+                      <Input
+                        id="page-name"
+                        value={pageName}
+                        onChange={(e) => setPageName(e.target.value)}
+                        placeholder="مثل: صفحة تسجيل الدخول"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="page-prompt" className="text-right">
+                        وصف الصفحة
+                      </Label>
+                      <Textarea
+                        id="page-prompt"
+                        value={pagePrompt}
+                        onChange={(e) => setPagePrompt(e.target.value)}
+                        placeholder="اكتب وصفاً مفصلاً للصفحة... مثل: صفحة تسجيل دخول تحتوي على حقول البريد الإلكتروني وكلمة المرور وزر دخول"
+                        className="col-span-3 min-h-[80px]"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button 
+                      onClick={handleGeneratePageWithAI} 
+                      disabled={isGenerating}
+                      className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          جار الإنشاء...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          إنشاء الصفحة
+                        </>
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
           
           <ScrollArea className="h-[calc(100vh-200px)]">
@@ -368,18 +671,22 @@ class ${page.name} extends StatelessWidget {
                         <MoreVertical className="h-3 w-3" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent align="end">
                       <DropdownMenuItem>
                         <Edit3 className="h-4 w-4 mr-2" />
-                        Rename
+                        إعادة تسمية
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         <Copy className="h-4 w-4 mr-2" />
-                        Duplicate
+                        نسخ
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        إعادة توليد بالذكاء الاصطناعي
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-red-600">
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
+                        حذف
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
