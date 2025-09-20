@@ -6,473 +6,323 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { 
   Plus, 
-  Play, 
-  Download, 
-  Eye, 
-  Calendar,
-  FileCode,
-  Database,
-  Navigation,
-  CheckCircle,
-  Loader2,
-  Zap,
+  FileText, 
   Smartphone,
-  ArrowRight,
-  ArrowLeft,
-  RefreshCw,
-  Save
+  Code2,
+  Eye,
+  Settings,
+  Layers,
+  MoreVertical,
+  Trash2,
+  Copy,
+  Edit3,
+  Play,
+  Download
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+interface AppPage {
+  id: string;
+  name: string;
+  type: "screen" | "component";
+  widgets: Widget[];
+  route: string;
+  createdAt: string;
+}
+
+interface Widget {
+  id: string;
+  type: "container" | "text" | "button" | "image" | "column" | "row";
+  properties: Record<string, any>;
+  children?: Widget[];
+}
 
 interface Project {
   id: string;
   name: string;
+  pages: AppPage[];
   createdAt: string;
-  status: "draft" | "generating" | "complete";
 }
-
-interface AppPlan {
-  appName: string;
-  description: string;
-  pages: string[];
-  features: string[];
-  backend: "firebase" | "supabase" | "nodejs";
-}
-
-type WorkflowStep = "prompt" | "planning" | "generation" | "database" | "navigation" | "preview" | "complete";
-
-const workflowSteps = [
-  { id: "prompt", label: "Prompt", icon: FileCode, description: "Describe your app" },
-  { id: "planning", label: "Planning", icon: Zap, description: "AI-generated plan" },
-  { id: "generation", label: "Generation", icon: Loader2, description: "Generate Flutter code" },
-  { id: "database", label: "Database", icon: Database, description: "Choose backend" },
-  { id: "navigation", label: "Navigation", icon: Navigation, description: "Connect pages" },
-  { id: "preview", label: "Preview", icon: Eye, description: "Test your app" },
-  { id: "complete", label: "Complete", icon: CheckCircle, description: "Download & deploy" }
-];
 
 export default function DashboardPage() {
-  const [projects, setProjects] = useState<Project[]>([
-    { id: "1", name: "E-commerce App", createdAt: "2024-03-15", status: "complete" },
-    { id: "2", name: "Social Media Dashboard", createdAt: "2024-03-14", status: "generating" },
-    { id: "3", name: "Recipe Finder", createdAt: "2024-03-13", status: "draft" }
-  ]);
-  
-  const [currentProject, setCurrentProject] = useState<Project | null>(projects[0]);
-  const [currentStep, setCurrentStep] = useState<WorkflowStep>("prompt");
-  const [completedSteps, setCompletedSteps] = useState<Set<WorkflowStep>>(new Set());
-  const [appPlan, setAppPlan] = useState<AppPlan | null>(null);
-  const [logs, setLogs] = useState<string[]>([]);
-  const [prompt, setPrompt] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedBackend, setSelectedBackend] = useState<string>("firebase");
+  const [currentProject] = useState<Project>({
+    id: "1",
+    name: "My Flutter App",
+    pages: [
+      {
+        id: "home",
+        name: "HomePage",
+        type: "screen",
+        route: "/",
+        createdAt: "2024-03-15",
+        widgets: [
+          {
+            id: "w1",
+            type: "column",
+            properties: { padding: 16, alignment: "center" },
+            children: [
+              {
+                id: "w2",
+                type: "text",
+                properties: { 
+                  text: "Welcome to My App",
+                  fontSize: 24,
+                  fontWeight: "bold",
+                  color: "#2563eb"
+                }
+              },
+              {
+                id: "w3",
+                type: "button",
+                properties: {
+                  text: "Get Started",
+                  backgroundColor: "#059669",
+                  textColor: "#ffffff",
+                  padding: 12
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "profile",
+        name: "ProfilePage",
+        type: "screen",
+        route: "/profile",
+        createdAt: "2024-03-15",
+        widgets: [
+          {
+            id: "w4",
+            type: "column",
+            properties: { padding: 16 },
+            children: [
+              {
+                id: "w5",
+                type: "text",
+                properties: {
+                  text: "User Profile",
+                  fontSize: 20,
+                  fontWeight: "bold"
+                }
+              },
+              {
+                id: "w6",
+                type: "container",
+                properties: {
+                  height: 200,
+                  backgroundColor: "#f3f4f6",
+                  borderRadius: 8
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "settings",
+        name: "SettingsPage", 
+        type: "screen",
+        route: "/settings",
+        createdAt: "2024-03-15",
+        widgets: [
+          {
+            id: "w7",
+            type: "column",
+            properties: { padding: 16 },
+            children: [
+              {
+                id: "w8",
+                type: "text",
+                properties: {
+                  text: "App Settings",
+                  fontSize: 20,
+                  fontWeight: "bold"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    createdAt: "2024-03-15"
+  });
 
-  const handleNewProject = async () => {
-    try {
-      // API call: POST /api/projects
-      const newProject: Project = {
-        id: Date.now().toString(),
-        name: `New Project ${projects.length + 1}`,
-        createdAt: new Date().toISOString().split('T')[0],
-        status: "draft"
-      };
-      setProjects([newProject, ...projects]);
-      setCurrentProject(newProject);
-      setCurrentStep("prompt");
-      setCompletedSteps(new Set());
-      setAppPlan(null);
-      setLogs([]);
-      setPrompt("");
-    } catch (error) {
-      console.error("Failed to create project:", error);
-    }
-  };
+  const [selectedPage, setSelectedPage] = useState<AppPage>(currentProject.pages[0]);
+  const [selectedWidget, setSelectedWidget] = useState<Widget | null>(null);
+  const [activeTab, setActiveTab] = useState<"design" | "code">("design");
 
-  const handleGeneratePlan = async () => {
-    if (!currentProject || !prompt.trim()) return;
-    
-    setIsGenerating(true);
-    
-    try {
-      // API call: POST /api/projects/:id/plan
-      
-      // Simulate AI planning
-      setTimeout(() => {
-        const plan: AppPlan = {
-          appName: currentProject.name,
-          description: prompt,
-          pages: ["Home", "Profile", "Settings", "About"],
-          features: ["User Authentication", "Push Notifications", "Offline Support"],
-          backend: "firebase"
-        };
-        setAppPlan(plan);
-        setCompletedSteps(prev => new Set([...prev, "prompt"]));
-        setCurrentStep("planning");
-        setIsGenerating(false);
-      }, 2000);
-    } catch (error) {
-      console.error("Failed to generate plan:", error);
-      setIsGenerating(false);
-    }
-  };
-
-  const handleGenerateCode = async () => {
-    if (!appPlan) return;
-    
-    setCurrentStep("generation");
-    setLogs([]);
-    
-    // API call: POST /api/projects/:id/pages
-    
-    // Simulate log generation
-    const logMessages = [
-      "🚀 Starting Flutter project generation...",
-      "📁 Creating project structure",
-      "📝 Generating main.dart",
-      "🎨 Creating UI components",
-      "🔗 Setting up navigation routes",
-      "🔧 Configuring dependencies in pubspec.yaml",
-      "📱 Setting up platform files",
-      "✅ Flutter project generated successfully!"
-    ];
-    
-    logMessages.forEach((log, index) => {
-      setTimeout(() => {
-        setLogs(prev => [...prev, log]);
-        if (index === logMessages.length - 1) {
-          setCompletedSteps(prev => new Set([...prev, "planning", "generation"]));
-          setTimeout(() => setCurrentStep("database"), 1000);
+  const handleAddPage = () => {
+    const newPage: AppPage = {
+      id: `page_${Date.now()}`,
+      name: `NewPage${currentProject.pages.length + 1}`,
+      type: "screen",
+      route: `/page${currentProject.pages.length + 1}`,
+      createdAt: new Date().toISOString().split('T')[0],
+      widgets: [
+        {
+          id: `w_${Date.now()}`,
+          type: "column",
+          properties: { padding: 16, alignment: "center" },
+          children: [
+            {
+              id: `w_${Date.now() + 1}`,
+              type: "text",
+              properties: {
+                text: "New Page",
+                fontSize: 24,
+                fontWeight: "bold"
+              }
+            }
+          ]
         }
-      }, index * 800);
-    });
+      ]
+    };
+    
+    currentProject.pages.push(newPage);
+    setSelectedPage(newPage);
   };
 
-  const handleDatabaseConfig = () => {
-    setCompletedSteps(prev => new Set([...prev, "database"]));
-    setCurrentStep("navigation");
+  const generatePageCode = (page: AppPage): string => {
+    const generateWidgetCode = (widget: Widget, indent = 2): string => {
+      const spaces = ' '.repeat(indent);
+      
+      switch (widget.type) {
+        case "column":
+          const children = widget.children?.map(child => generateWidgetCode(child, indent + 2)).join(',\n') || '';
+          return `${spaces}Column(\n${spaces}  children: [\n${children}\n${spaces}  ],\n${spaces})`;
+        
+        case "text":
+          return `${spaces}Text(\n${spaces}  '${widget.properties.text || 'Text'}',\n${spaces}  style: TextStyle(\n${spaces}    fontSize: ${widget.properties.fontSize || 16},\n${spaces}    fontWeight: FontWeight.${widget.properties.fontWeight || 'normal'},\n${spaces}    color: Color(0xFF${widget.properties.color?.replace('#', '') || '000000'}),\n${spaces}  ),\n${spaces})`;
+        
+        case "button":
+          return `${spaces}ElevatedButton(\n${spaces}  onPressed: () {},\n${spaces}  style: ElevatedButton.styleFrom(\n${spaces}    backgroundColor: Color(0xFF${widget.properties.backgroundColor?.replace('#', '') || '2563eb'}),\n${spaces}    padding: EdgeInsets.all(${widget.properties.padding || 8}),\n${spaces}  ),\n${spaces}  child: Text(\n${spaces}    '${widget.properties.text || 'Button'}',\n${spaces}    style: TextStyle(\n${spaces}      color: Color(0xFF${widget.properties.textColor?.replace('#', '') || 'ffffff'}),\n${spaces}    ),\n${spaces}  ),\n${spaces})`;
+        
+        case "container":
+          return `${spaces}Container(\n${spaces}  height: ${widget.properties.height || 100},\n${spaces}  decoration: BoxDecoration(\n${spaces}    color: Color(0xFF${widget.properties.backgroundColor?.replace('#', '') || 'f3f4f6'}),\n${spaces}    borderRadius: BorderRadius.circular(${widget.properties.borderRadius || 0}),\n${spaces}  ),\n${spaces})`;
+        
+        default:
+          return `${spaces}Container()`;
+      }
+    };
+
+    const widgetsCode = page.widgets.map(widget => generateWidgetCode(widget, 6)).join(',\n');
+
+    return `import 'package:flutter/material.dart';
+
+class ${page.name} extends StatelessWidget {
+  const ${page.name}({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${page.name.replace('Page', '')}'),
+      ),
+      body: SafeArea(
+        child: ${widgetsCode}
+      ),
+    );
+  }
+}`;
   };
 
-  const handleNavigationConfig = () => {
-    setCompletedSteps(prev => new Set([...prev, "navigation"]));
-    setCurrentStep("preview");
-  };
+  const renderWidgetPreview = (widget: Widget): React.ReactNode => {
+    const handleWidgetClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setSelectedWidget(widget);
+    };
 
-  const handleBuildPreview = async () => {
-    // API call: POST /api/projects/:id/build
-    setCompletedSteps(prev => new Set([...prev, "preview"]));
-    setCurrentStep("complete");
-  };
-
-  const isStepCompleted = (stepId: WorkflowStep) => completedSteps.has(stepId);
-  const isStepCurrent = (stepId: WorkflowStep) => currentStep === stepId;
-  const isStepAccessible = (stepId: WorkflowStep) => {
-    const stepIndex = workflowSteps.findIndex(step => step.id === stepId);
-    const currentIndex = workflowSteps.findIndex(step => step.id === currentStep);
-    return stepIndex <= currentIndex;
-  };
-
-  const getStepIcon = (step: typeof workflowSteps[0]) => {
-    const IconComponent = step.icon;
-    if (isStepCompleted(step.id as WorkflowStep)) {
-      return <CheckCircle className="w-5 h-5 text-emerald-600" />;
-    }
-    if (isStepCurrent(step.id as WorkflowStep)) {
-      return <IconComponent className="w-5 h-5 text-emerald-600" />;
-    }
-    return <IconComponent className="w-5 h-5 text-muted-foreground" />;
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case "prompt":
+    const isSelected = selectedWidget?.id === widget.id;
+    
+    switch (widget.type) {
+      case "column":
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Describe Your App</CardTitle>
-              <CardDescription>
-                Tell us what kind of Flutter app you want to build. Be specific about features, pages, and design.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Textarea
-                placeholder="I want to create a social media app with user profiles, posts, comments, and real-time messaging..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                rows={6}
-                className="min-h-[150px]"
-              />
-              <div className="flex justify-between">
-                <Button variant="outline" disabled>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Previous
-                </Button>
-                <Button 
-                  onClick={handleGeneratePlan} 
-                  disabled={!prompt.trim() || isGenerating}
-                  className="bg-emerald-600 hover:bg-emerald-700"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generating Plan...
-                    </>
-                  ) : (
-                    <>
-                      Generate Plan
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div 
+            key={widget.id}
+            className={`flex flex-col items-center space-y-2 p-4 cursor-pointer transition-all ${
+              isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+            }`}
+            onClick={handleWidgetClick}
+            style={{ padding: widget.properties.padding || 16 }}
+          >
+            {widget.children?.map(child => renderWidgetPreview(child))}
+          </div>
         );
-
-      case "planning":
+      
+      case "text":
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>App Plan</CardTitle>
-              <CardDescription>
-                AI-generated plan based on your description. Review and modify if needed.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {appPlan && (
-                <>
-                  <div>
-                    <h4 className="font-semibold mb-2">App Name</h4>
-                    <Input value={appPlan.appName} readOnly />
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Pages ({appPlan.pages.length})</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {appPlan.pages.map((page, index) => (
-                        <Badge key={index} variant="secondary">{page}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Features ({appPlan.features.length})</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {appPlan.features.map((feature, index) => (
-                        <Badge key={index} variant="outline">{feature}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Backend</h4>
-                    <Badge className="bg-emerald-100 text-emerald-800">{appPlan.backend}</Badge>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <Button variant="outline" onClick={() => setCurrentStep("prompt")}>
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                    <Button onClick={handleGenerateCode} className="bg-emerald-600 hover:bg-emerald-700">
-                      Generate Pages
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          <div
+            key={widget.id}
+            className={`cursor-pointer transition-all ${
+              isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+            }`}
+            onClick={handleWidgetClick}
+            style={{
+              fontSize: widget.properties.fontSize || 16,
+              fontWeight: widget.properties.fontWeight || 'normal',
+              color: widget.properties.color || '#000000',
+              padding: '4px'
+            }}
+          >
+            {widget.properties.text || 'Text'}
+          </div>
         );
-
-      case "generation":
+      
+      case "button":
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Code Generation</CardTitle>
-              <CardDescription>
-                Generating Flutter code for your app. This may take a few minutes.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[400px] w-full rounded border bg-slate-950 text-green-400 p-4 font-mono text-sm">
-                {logs.map((log, index) => (
-                  <div key={index} className="mb-1">{log}</div>
-                ))}
-                {logs.length === 0 && (
-                  <div className="text-muted-foreground">Waiting for generation to start...</div>
-                )}
-              </ScrollArea>
-              <div className="flex justify-between mt-4">
-                <Button variant="outline" onClick={() => setCurrentStep("planning")}>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-                <Button variant="outline" disabled={logs.length === 0}>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Regenerate
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <button
+            key={widget.id}
+            className={`rounded transition-all ${
+              isSelected ? 'ring-2 ring-blue-500' : 'hover:opacity-80'
+            }`}
+            onClick={handleWidgetClick}
+            style={{
+              backgroundColor: widget.properties.backgroundColor || '#2563eb',
+              color: widget.properties.textColor || '#ffffff',
+              padding: widget.properties.padding || 8,
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            {widget.properties.text || 'Button'}
+          </button>
         );
-
-      case "database":
+      
+      case "container":
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Choose Backend</CardTitle>
-              <CardDescription>
-                Select the backend service for your app's data storage and authentication.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Select value={selectedBackend} onValueChange={setSelectedBackend}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select backend service" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="firebase">Firebase - Google's platform</SelectItem>
-                  <SelectItem value="supabase">Supabase - Open source alternative</SelectItem>
-                  <SelectItem value="nodejs">Node.js - Custom backend</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={() => setCurrentStep("generation")}>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-                <Button onClick={handleDatabaseConfig} className="bg-emerald-600 hover:bg-emerald-700">
-                  Configure Database
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div
+            key={widget.id}
+            className={`cursor-pointer transition-all ${
+              isSelected ? 'ring-2 ring-blue-500' : 'hover:opacity-80'
+            }`}
+            onClick={handleWidgetClick}
+            style={{
+              height: widget.properties.height || 100,
+              backgroundColor: widget.properties.backgroundColor || '#f3f4f6',
+              borderRadius: widget.properties.borderRadius || 0,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: '#666'
+            }}
+          >
+            Container
+          </div>
         );
-
-      case "navigation":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Navigation & Actions</CardTitle>
-              <CardDescription>
-                Configure how users navigate between pages and what actions buttons perform.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <Navigation className="w-12 h-12 mx-auto mb-4" />
-                <p>Navigation configuration interface</p>
-                <p className="text-xs mt-2">Connect pages and bind button actions</p>
-              </div>
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={() => setCurrentStep("database")}>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-                <Button onClick={handleNavigationConfig} className="bg-emerald-600 hover:bg-emerald-700">
-                  Save Navigation
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case "preview":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>App Preview</CardTitle>
-              <CardDescription>
-                Test your app and see how it looks on different devices.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="w-full h-[500px] border rounded-lg bg-gray-50 flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <Smartphone className="w-16 h-16 mx-auto mb-4" />
-                  <p className="text-lg font-medium">App Preview</p>
-                  <p className="text-sm mt-2">iframe: /preview/{currentProject?.id}</p>
-                  <p className="text-xs mt-1">Your Flutter app will load here</p>
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={() => setCurrentStep("navigation")}>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-                <div className="space-x-2">
-                  <Button variant="outline">
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Regenerate
-                  </Button>
-                  <Button variant="outline">
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Page
-                  </Button>
-                  <Button onClick={handleBuildPreview} className="bg-emerald-600 hover:bg-emerald-700">
-                    Build Preview
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case "complete":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>App Complete!</CardTitle>
-              <CardDescription>
-                Your Flutter app has been generated successfully. Download or deploy it now.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download ZIP
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Play className="w-4 h-4 mr-2" />
-                  Run App
-                </Button>
-              </div>
-              
-              <Separator />
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="space-y-2">
-                  <p><strong>Project:</strong> {currentProject?.name}</p>
-                  <p><strong>Pages:</strong> {appPlan?.pages.length || 0}</p>
-                </div>
-                <div className="space-y-2">
-                  <p><strong>Features:</strong> {appPlan?.features.length || 0}</p>
-                  <p><strong>Backend:</strong> {appPlan?.backend}</p>
-                </div>
-              </div>
-              
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={() => setCurrentStep("preview")}>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Preview
-                </Button>
-                <Button onClick={handleNewProject} variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Project
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
+      
       default:
         return null;
     }
@@ -480,156 +330,271 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Left Sidebar */}
-      <div className="w-[280px] border-r bg-card flex flex-col">
+      {/* Left Sidebar - Pages */}
+      <div className="w-64 border-r bg-card flex flex-col">
+        <div className="p-4 border-b">
+          <h2 className="font-semibold text-lg">{currentProject.name}</h2>
+          <p className="text-sm text-muted-foreground">Flutter App Builder</p>
+        </div>
+        
         <div className="p-4">
-          {/* New Project Button */}
-          <Card className="mb-4">
-            <CardContent className="p-4">
-              <Button 
-                onClick={handleNewProject} 
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
-                size="lg"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                New Project
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Projects List */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold px-2">My Projects</h3>
-            <ScrollArea className="h-[calc(100vh-200px)]">
-              <div className="space-y-2">
-                {projects.map((project) => (
-                  <Card 
-                    key={project.id} 
-                    className={`cursor-pointer transition-all ${
-                      currentProject?.id === project.id 
-                        ? "ring-2 ring-emerald-500 bg-emerald-50 dark:bg-emerald-950/20" 
-                        : "hover:bg-muted/50"
-                    }`}
-                    onClick={() => setCurrentProject(project)}
-                  >
-                    <CardContent className="p-3">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm truncate">{project.name}</h4>
-                          <Badge 
-                            variant={project.status === "complete" ? "default" : "secondary"}
-                            className="text-xs"
-                          >
-                            {project.status}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center text-xs text-muted-foreground">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          {project.createdAt}
-                        </div>
-                        <div className="flex gap-1">
-                          <Button size="sm" variant="outline" className="text-xs h-7 px-2">
-                            <Play className="w-3 h-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="text-xs h-7 px-2">
-                            <Eye className="w-3 h-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="text-xs h-7 px-2">
-                            <Download className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </ScrollArea>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-medium">Pages</h3>
+            <Button size="sm" onClick={handleAddPage} className="h-8 w-8 p-0">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          <ScrollArea className="h-[calc(100vh-200px)]">
+            <div className="space-y-1">
+              {currentProject.pages.map((page) => (
+                <div
+                  key={page.id}
+                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                    selectedPage.id === page.id 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'hover:bg-muted/50'
+                  }`}
+                  onClick={() => setSelectedPage(page)}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Smartphone className="h-4 w-4" />
+                    <span className="text-sm font-medium">{page.name}</span>
+                  </div>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                        <MoreVertical className="h-3 w-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+        
+        <div className="mt-auto p-4 border-t">
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex-1">
+              <Play className="h-4 w-4 mr-2" />
+              Run
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Right Main Area */}
-      <div className="flex-1 flex">
-        {/* Workflow Stepper */}
-        <div className="w-64 border-r bg-card p-4">
-          <h3 className="text-lg font-semibold mb-4">Workflow Steps</h3>
-          <div className="space-y-3">
-            {workflowSteps.map((step, index) => (
-              <div key={step.id} className="flex items-start space-x-3">
-                <div className="flex flex-col items-center">
-                  <div 
-                    className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-                      isStepCurrent(step.id as WorkflowStep)
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
-                        : isStepCompleted(step.id as WorkflowStep)
-                        ? "border-emerald-500 bg-emerald-500"
-                        : "border-muted-foreground bg-background"
-                    }`}
-                  >
-                    {getStepIcon(step)}
-                  </div>
-                  {index < workflowSteps.length - 1 && (
-                    <div 
-                      className={`w-0.5 h-8 mt-1 ${
-                        isStepCompleted(step.id as WorkflowStep) 
-                          ? "bg-emerald-500" 
-                          : "bg-muted"
-                      }`} 
-                    />
-                  )}
-                </div>
-                <div 
-                  className={`flex-1 cursor-pointer ${
-                    isStepAccessible(step.id as WorkflowStep) ? "" : "opacity-50 cursor-not-allowed"
-                  }`}
-                  onClick={() => isStepAccessible(step.id as WorkflowStep) && setCurrentStep(step.id as WorkflowStep)}
-                >
-                  <h4 
-                    className={`font-medium text-sm ${
-                      isStepCurrent(step.id as WorkflowStep) 
-                        ? "text-emerald-600" 
-                        : isStepCompleted(step.id as WorkflowStep)
-                        ? "text-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    {step.label}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">{step.description}</p>
-                </div>
-              </div>
-            ))}
+      {/* Center - Visual Editor */}
+      <div className="flex-1 flex flex-col">
+        <div className="border-b bg-card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-xl font-semibold">{selectedPage.name}</h1>
+              <Badge variant="outline">{selectedPage.route}</Badge>
+            </div>
+            
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "design" | "code")}>
+              <TabsList>
+                <TabsTrigger value="design">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Design
+                </TabsTrigger>
+                <TabsTrigger value="code">
+                  <Code2 className="h-4 w-4 mr-2" />
+                  Code
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 p-6">
-          {currentProject ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-bold">{currentProject.name}</h1>
-                  <p className="text-muted-foreground">
-                    Step {workflowSteps.findIndex(s => s.id === currentStep) + 1} of {workflowSteps.length}
-                  </p>
+          <Tabs value={activeTab} className="h-full">
+            <TabsContent value="design" className="h-full">
+              <div className="h-full flex items-center justify-center">
+                <div className="w-80 h-[600px] bg-white border rounded-lg shadow-lg overflow-auto">
+                  <div className="h-12 bg-blue-600 flex items-center justify-center">
+                    <span className="text-white font-medium">{selectedPage.name.replace('Page', '')}</span>
+                  </div>
+                  <div 
+                    className="flex-1 min-h-0"
+                    onClick={() => setSelectedWidget(null)}
+                  >
+                    {selectedPage.widgets.map(widget => renderWidgetPreview(widget))}
+                  </div>
                 </div>
-                <Badge variant="outline" className="capitalize">
-                  {currentProject.status}
-                </Badge>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="code" className="h-full">
+              <div className="h-full">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <FileText className="h-5 w-5" />
+                      <span>{selectedPage.name}.dart</span>
+                    </CardTitle>
+                    <CardDescription>
+                      Generated Flutter code for {selectedPage.name}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[calc(100%-120px)]">
+                    <ScrollArea className="h-full">
+                      <pre className="text-sm bg-slate-950 text-green-400 p-4 rounded-lg font-mono overflow-x-auto">
+                        {generatePageCode(selectedPage)}
+                      </pre>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+
+      {/* Right Sidebar - Properties */}
+      <div className="w-80 border-l bg-card flex flex-col">
+        <div className="p-4 border-b">
+          <h3 className="font-semibold">Properties</h3>
+          <p className="text-sm text-muted-foreground">
+            {selectedWidget ? `${selectedWidget.type} properties` : 'Select a widget to edit'}
+          </p>
+        </div>
+        
+        <ScrollArea className="flex-1 p-4">
+          {selectedWidget ? (
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Widget Type</label>
+                <Input value={selectedWidget.type} readOnly className="mt-1" />
               </div>
               
-              {renderStepContent()}
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <Plus className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <h2 className="text-xl font-semibold mb-2">No Project Selected</h2>
-                <p>Create a new project or select an existing one to get started.</p>
+              {selectedWidget.type === "text" && (
+                <>
+                  <div>
+                    <label className="text-sm font-medium">Text</label>
+                    <Textarea 
+                      value={selectedWidget.properties.text || ''} 
+                      className="mt-1"
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Font Size</label>
+                    <Input 
+                      type="number" 
+                      value={selectedWidget.properties.fontSize || 16} 
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Color</label>
+                    <Input 
+                      type="color" 
+                      value={selectedWidget.properties.color || '#000000'} 
+                      className="mt-1 h-10"
+                    />
+                  </div>
+                </>
+              )}
+              
+              {selectedWidget.type === "button" && (
+                <>
+                  <div>
+                    <label className="text-sm font-medium">Button Text</label>
+                    <Input 
+                      value={selectedWidget.properties.text || ''} 
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Background Color</label>
+                    <Input 
+                      type="color" 
+                      value={selectedWidget.properties.backgroundColor || '#2563eb'} 
+                      className="mt-1 h-10"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Text Color</label>
+                    <Input 
+                      type="color" 
+                      value={selectedWidget.properties.textColor || '#ffffff'} 
+                      className="mt-1 h-10"
+                    />
+                  </div>
+                </>
+              )}
+              
+              {selectedWidget.type === "container" && (
+                <>
+                  <div>
+                    <label className="text-sm font-medium">Height</label>
+                    <Input 
+                      type="number" 
+                      value={selectedWidget.properties.height || 100} 
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Background Color</label>
+                    <Input 
+                      type="color" 
+                      value={selectedWidget.properties.backgroundColor || '#f3f4f6'} 
+                      className="mt-1 h-10"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Border Radius</label>
+                    <Input 
+                      type="number" 
+                      value={selectedWidget.properties.borderRadius || 0} 
+                      className="mt-1"
+                    />
+                  </div>
+                </>
+              )}
+              
+              <Separator />
+              
+              <div className="space-y-2">
+                <h4 className="font-medium">Actions</h4>
+                <Button variant="outline" size="sm" className="w-full">
+                  <Copy className="h-4 w-4 mr-2" />
+                  Duplicate Widget
+                </Button>
+                <Button variant="outline" size="sm" className="w-full text-red-600">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Widget
+                </Button>
               </div>
             </div>
+          ) : (
+            <div className="text-center text-muted-foreground py-8">
+              <Layers className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Select a widget to see its properties</p>
+            </div>
           )}
-        </div>
+        </ScrollArea>
       </div>
     </div>
   );
