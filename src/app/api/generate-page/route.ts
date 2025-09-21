@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       code: result.code,
+      pubspecYaml: result.pubspecYaml,
       widgetStructure: result.widgetStructure,
       generatedAt: new Date().toISOString()
     });

@@ -22,9 +22,11 @@ export interface ProjectPage {
   name: string;
   description: string;
   code: string;
+  pubspecYaml: string;
   widgetStructure: string;
   createdAt: Date;
   previewUrl?: string;
+  flutterBuildUrl?: string; // For Run Preview feature
 }
 
 export default function DashboardPage() {

@@ -1,0 +1,38 @@
+You are building a platform similar to FlutterFlow using Flutter + Dart.  
+Here is what you need to do step by step:
+
+1. **User Prompt Input**
+   - Create a dashboard where the user can type a natural language prompt describing the page (e.g., "Splash screen with animated logo, auto-navigate to home after 2 seconds").
+   - Provide two fields: (a) Page name, (b) Page description.
+
+2. **Send Prompt to Gemini API**
+   - When the user submits, send the description to Gemini API using the official endpoint:
+     POST https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=GEMINI_API_KEY
+   - Request should ask Gemini:  
+     "Generate a complete Flutter page in Dart code based on this description. Return both `lib/main.dart` content and any dependencies inside `pubspec.yaml` if required."
+
+3. **Show Results**
+   - Create three tabs:
+     (a) **Preview** → Render a simple widget structure preview (scaffold, columns, buttons, etc.) parsed from Gemini output.  
+     (b) **Generated Code** → Show the raw Dart code inside a Monaco code editor.  
+     (c) **Project Files** → Save generated files into `/temp_projects/{page_name}/` with correct structure (`.dart`, `.yaml`).
+
+4. **Run / Test Application**
+   - Add a button **Run Preview** which:
+     - Runs `flutter build web` for the generated project.
+     - Launches a local web preview inside an iframe so the user can test the app instantly.
+   - If build fails, display console logs and highlight errors.
+
+5. **Iterate**
+   - Allow user to regenerate with a new prompt.
+   - Keep history of all generated pages inside the same project.
+
+6. **Extra Features**
+   - Auto-link buttons and navigation routes if the prompt specifies it.
+   - Allow user to connect Firebase or Supabase by adding config files automatically.
+   - Allow exporting the whole project as a `.zip` file.
+
+Important:
+- Always generate valid Dart + Flutter code.
+- Ensure all required files are created (`main.dart`, `pubspec.yaml`, assets if mentioned).
+- The goal is to let the user design a working Flutter app only by describing it in natural language.
