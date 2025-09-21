@@ -55,6 +55,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     'https://db7016c2-bd95-4aa0-9f97-c4ba5ae5234b-00-2yxopmjd3x67h.riker.replit.dev',
     'https://3d2337df-b3cf-404d-8274-580a96c24231-00-2badse7d0ow6.sisko.replit.dev',
+    'https://94ace333-ca67-4484-80ee-488a02c66107-00-99yiips2ux7f.spock.replit.dev',
     'https://*.spock.replit.dev',
     'https://*.worf.replit.dev', 
     'https://*.riker.replit.dev',
