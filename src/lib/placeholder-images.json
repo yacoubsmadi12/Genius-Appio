@@ -1,0 +1,58 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Abstract AI and code background",
+      "imageUrl": "https://picsum.photos/seed/hero/1200/800",
+      "imageHint": "abstract code"
+    },
+    {
+      "id": "feature-ai-generation",
+      "description": "Robot arm building with blocks",
+      "imageUrl": "https://i.postimg.cc/TY9pFZCd/1.jpg",
+      "imageHint": "robot arm"
+    },
+    {
+      "id": "feature-multi-backend",
+      "description": "Server racks",
+      "imageUrl": "https://i.postimg.cc/28z5Q0mP/2.jpg",
+      "imageHint": "server rack"
+    },
+    {
+      "id": "feature-customizable",
+      "description": "Person customizing a user interface on a screen",
+      "imageUrl": "https://i.postimg.cc/3xqJH7pT/3.jpg",
+      "imageHint": "ui design"
+    },
+    {
+      "id": "about-us-team",
+      "description": "A diverse team collaborating in a modern office",
+      "imageUrl": "https://picsum.photos/seed/about/1200/800",
+      "imageHint": "team collaboration"
+    },
+    {
+      "id": "pricing-plan",
+      "description": "Abstract image representing growth for pricing page",
+      "imageUrl": "https://picsum.photos/seed/pricing/600/400",
+      "imageHint": "abstract growth"
+    },
+    {
+      "id": "slider-1",
+      "description": "A brain made of circuits and data streams",
+      "imageUrl": "https://picsum.photos/seed/slider1/1920/1080",
+      "imageHint": "ai brain"
+    },
+    {
+      "id": "slider-2",
+      "description": "Developer coding on a laptop with lines of code overlay",
+      "imageUrl": "https://picsum.photos/seed/slider2/1920/1080",
+      "imageHint": "developer coding"
+    },
+    {
+      "id": "slider-3",
+      "description": "Futuristic mobile app interface concept",
+      "imageUrl": "https://picsum.photos/seed/slider3/1920/1080",
+      "imageHint": "futuristic ui"
+    }
+  ]
+}
