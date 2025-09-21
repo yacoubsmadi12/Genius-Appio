@@ -2,119 +2,94 @@
 "use client";
 
 import { useState } from "react";
-import { GenerationForm } from "./components/generation-form";
-import { ProgressSidebar } from "./components/progress-sidebar";
-import { PlanningStep } from "./components/planning-step";
-import { FlutterCreateStep } from "./components/flutter-create-step";
-import { DatabaseStep } from "./components/database-step";
-import { IconStep } from "./components/icon-step";
-import type { GenerateAppFromPromptOutput } from "@/ai/flows";
+import { ProjectList } from "./components/project-list";
+import { ProjectWorkspace } from "./components/project-workspace";
+import { CreateProjectDialog } from "./components/create-project-dialog";
 
-export type WorkflowStep = 'prompt' | 'planning' | 'flutter-create' | 'database' | 'icon' | 'generating' | 'complete';
-
-export interface AppPlan {
-  appName: string;
+export interface Project {
+  id: string;
+  name: string;
   description: string;
-  pages: string[];
-  features: string[];
-  colors: string[];
-  backend: 'firebase' | 'supabase' | 'nodejs';
+  createdAt: Date;
+  updatedAt: Date;
+  pages: ProjectPage[];
+  backend?: 'firebase' | 'supabase' | 'nodejs';
+  isBackendConnected: boolean;
+}
+
+export interface ProjectPage {
+  id: string;
+  name: string;
+  description: string;
+  code: string;
+  widgetStructure: string;
+  createdAt: Date;
+  previewUrl?: string;
 }
 
 export default function DashboardPage() {
-  const [currentStep, setCurrentStep] = useState<WorkflowStep>('prompt');
-  const [appPlan, setAppPlan] = useState<AppPlan | null>(null);
-  const [generationResult, setGenerationResult] = useState<GenerateAppFromPromptOutput | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const handlePlanningComplete = (plan: AppPlan) => {
-    setAppPlan(plan);
-    setCurrentStep('flutter-create');
-  }
+  const handleCreateProject = (name: string, description: string) => {
+    const newProject: Project = {
+      id: Date.now().toString(),
+      name,
+      description,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      pages: [],
+      isBackendConnected: false
+    };
+    setProjects([...projects, newProject]);
+    setShowCreateDialog(false);
+    setSelectedProject(newProject);
+  };
 
-  const handleFlutterCreateComplete = () => {
-    setCurrentStep('database');
-  }
+  const handleProjectSelect = (project: Project) => {
+    setSelectedProject(project);
+  };
 
-  const handleDatabaseComplete = () => {
-    setCurrentStep('icon');
-  }
+  const handleBackToProjects = () => {
+    setSelectedProject(null);
+  };
 
-  const handleIconComplete = () => {
-    setCurrentStep('generating');
-    setIsGenerating(true);
-  }
-
-  const handleGenerationComplete = (result: GenerateAppFromPromptOutput) => {
-    setGenerationResult(result);
-    setIsGenerating(false);
-    setCurrentStep('complete');
-  }
-
-  const handleReset = () => {
-    setCurrentStep('prompt');
-    setAppPlan(null);
-    setGenerationResult(null);
-    setIsGenerating(false);
-  }
+  const updateProject = (updatedProject: Project) => {
+    setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+    setSelectedProject(updatedProject);
+  };
 
   return (
-    <div className="container mx-auto py-12 px-4">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">
-          Genius APPio
-        </h1>
-        <p className="mt-4 text-xl text-muted-foreground">
-          Let's build your app intelligently and interactively
-        </p>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-        <div className="lg:col-span-2">
-          {currentStep === 'prompt' && (
-            <GenerationForm 
-              onPlanningStart={(prompt) => setCurrentStep('planning')}
-              onReset={handleReset}
-            />
-          )}
-          {currentStep === 'planning' && (
-            <PlanningStep 
-              onComplete={handlePlanningComplete}
-              onBack={() => setCurrentStep('prompt')}
-            />
-          )}
-          {currentStep === 'flutter-create' && appPlan && (
-            <FlutterCreateStep 
-              appPlan={appPlan}
-              onComplete={handleFlutterCreateComplete}
-              onBack={() => setCurrentStep('planning')}
-            />
-          )}
-          {currentStep === 'database' && appPlan && (
-            <DatabaseStep 
-              appPlan={appPlan}
-              onComplete={handleDatabaseComplete}
-              onBack={() => setCurrentStep('flutter-create')}
-            />
-          )}
-          {currentStep === 'icon' && appPlan && (
-            <IconStep 
-              appPlan={appPlan}
-              onComplete={handleIconComplete}
-              onBack={() => setCurrentStep('database')}
-            />
-          )}
-        </div>
-        <div className="lg:col-span-1">
-          <ProgressSidebar 
-            currentStep={currentStep}
-            appPlan={appPlan}
-            isGenerating={isGenerating}
-            generationResult={generationResult}
-            onReset={handleReset}
-            onGenerationComplete={handleGenerationComplete}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      {!selectedProject ? (
+        <div className="container mx-auto py-12 px-4">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">
+              Genius APPio Dashboard
+            </h1>
+            <p className="mt-4 text-xl text-muted-foreground">
+              Create and manage your Flutter applications
+            </p>
+          </div>
+          <ProjectList 
+            projects={projects}
+            onProjectSelect={handleProjectSelect}
+            onCreateProject={() => setShowCreateDialog(true)}
+          />
+          <CreateProjectDialog
+            open={showCreateDialog}
+            onOpenChange={setShowCreateDialog}
+            onCreateProject={handleCreateProject}
           />
         </div>
-      </div>
+      ) : (
+        <ProjectWorkspace
+          project={selectedProject}
+          onBackToProjects={handleBackToProjects}
+          onUpdateProject={updateProject}
+        />
+      )}
     </div>
   );
 }
