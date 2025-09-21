@@ -61,22 +61,59 @@ export function PageBuilder({ project, page, onSave, onCancel }: PageBuilderProp
   const generatePageWithAI = async (values: z.infer<typeof formSchema>) => {
     setIsGenerating(true);
     
-    // Simulate AI page generation with Gemini
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    const newPage: ProjectPage = {
-      id: page?.id || Date.now().toString(),
-      name: values.name,
-      description: values.description,
-      createdAt: page?.createdAt || new Date(),
-      code: generateSampleFlutterCode(values.name, values.description),
-      widgetStructure: generateWidgetStructure(values.name),
-      previewUrl: `https://flutter-preview.example.com/${project.id}/${values.name.toLowerCase()}`
-    };
-    
-    setGeneratedPage(newPage);
-    setIsGenerating(false);
-    setActiveTab("preview");
+    try {
+      // Call real Gemini API for page generation
+      const response = await fetch('/api/generate-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: values.name,
+          description: values.description,
+          projectContext: `${project.name}: ${project.description}`
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to generate page');
+      }
+
+      const newPage: ProjectPage = {
+        id: page?.id || Date.now().toString(),
+        name: values.name,
+        description: values.description,
+        createdAt: page?.createdAt || new Date(),
+        code: result.code,
+        widgetStructure: result.widgetStructure,
+        previewUrl: `https://flutter-preview.example.com/${project.id}/${values.name.toLowerCase()}`
+      };
+      
+      setGeneratedPage(newPage);
+      setActiveTab("preview");
+    } catch (error) {
+      console.error('Page generation failed:', error);
+      // Fallback to sample code if API fails
+      const fallbackPage: ProjectPage = {
+        id: page?.id || Date.now().toString(),
+        name: values.name,
+        description: values.description,
+        createdAt: page?.createdAt || new Date(),
+        code: generateSampleFlutterCode(values.name, values.description),
+        widgetStructure: generateWidgetStructure(values.name),
+        previewUrl: `https://flutter-preview.example.com/${project.id}/${values.name.toLowerCase()}`
+      };
+      
+      setGeneratedPage(fallbackPage);
+      setActiveTab("preview");
+      
+      // Show error message to user
+      alert(`AI Generation Error: ${error instanceof Error ? error.message : 'Unknown error'}. Using fallback code.`);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleSave = () => {
@@ -206,12 +243,12 @@ export function PageBuilder({ project, page, onSave, onCancel }: PageBuilderProp
                       {isGenerating ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating with AI...
+                          Generating with Gemini AI...
                         </>
                       ) : (
                         <>
                           <Sparkles className="mr-2 h-4 w-4" />
-                          Generate Page with AI
+                          Generate Page with Gemini AI
                         </>
                       )}
                     </Button>
@@ -239,7 +276,8 @@ export function PageBuilder({ project, page, onSave, onCancel }: PageBuilderProp
                     <div className="flex items-center justify-center h-96 bg-muted rounded-lg">
                       <div className="text-center">
                         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-                        <p>AI is generating your page...</p>
+                        <p>Gemini AI is generating your page...</p>
+                        <p className="text-sm text-muted-foreground mt-2">This may take a moment</p>
                       </div>
                     </div>
                   ) : generatedPage ? (
