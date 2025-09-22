@@ -27,6 +27,9 @@ export interface ProjectPage {
   createdAt: Date;
   previewUrl?: string;
   flutterBuildUrl?: string; // For Run Preview feature
+  screenFilePath?: string; // Path in lib/screens/
+  className?: string; // Flutter class name for navigation
+  routeName?: string; // Route name for navigation
 }
 
 export default function DashboardPage() {
