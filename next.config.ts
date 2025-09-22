@@ -53,6 +53,7 @@ const nextConfig: NextConfig = {
   },
   // Allow all dev origins for Replit proxy system
   allowedDevOrigins: [
+    'https://c8715535-2694-4d5b-be62-ea938cd6a8cf-00-3b08leo46cetg.riker.replit.dev',
     'https://db7016c2-bd95-4aa0-9f97-c4ba5ae5234b-00-2yxopmjd3x67h.riker.replit.dev',
     'https://3d2337df-b3cf-404d-8274-580a96c24231-00-2badse7d0ow6.sisko.replit.dev',
     'https://94ace333-ca67-4484-80ee-488a02c66107-00-99yiips2ux7f.spock.replit.dev',
