@@ -12,6 +12,12 @@ export interface PageGenerationResponse {
   error?: string;
 }
 
+// DON'T DELETE THIS COMMENT
+// Following javascript_gemini integration blueprint
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+
 export async function generateFlutterPage(request: PageGenerationRequest): Promise<PageGenerationResponse> {
   try {
     const prompt = `Generate a PROFESSIONAL, BEAUTIFUL Flutter page in Dart code that matches FlutterFlow's design quality. Create a modern, visually stunning, child-friendly interface with animations and Material 3 design.
@@ -86,46 +92,22 @@ Return a JSON object with exactly these fields:
 
 **IMPORTANT:** Generate code that looks as professional and beautiful as FlutterFlow's output - with smooth animations, modern design, child-friendly colors, and proper Material 3 styling. The result should be visually stunning and production-ready.`;
 
-    // Use the specific Gemini API endpoint format as requested
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    // Check if API key is configured
+    if (!process.env.GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY environment variable is not set');
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 8192,
-          }
-        })
-      }
-    );
+    // Use the Google GenAI SDK as per blueprint
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+    });
 
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const rawText = response.text;
     
-    if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
-      throw new Error("Invalid response format from Gemini API");
+    if (!rawText) {
+      throw new Error("Empty response from Gemini API");
     }
-
-    const rawText = data.candidates[0].content.parts[0].text;
     
     // Try to parse as JSON, fallback to structured parsing if needed
     let parsedData;
