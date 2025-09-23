@@ -1,0 +1,60 @@
+You are a senior full-stack developer. Build a **modern Dashboard page** for my AI app-generation platform.  
+The Dashboard should allow the user to describe the Flutter app they want, select preferences, and then send this as a prompt directly to the Gemini API using my API key (I will provide the key).
+
+--- Requirements ---
+1. **Layout:**
+   - Sidebar on the left with: Logo, Dashboard, My Projects, Settings, Logout.
+   - Main content on the right: App Builder form.
+
+2. **App Builder Form:**
+   - Large textarea: "Describe your app".
+   - Dropdown: Theme (Light / Dark / Custom).
+   - Color picker: Primary color.
+   - Upload field: App icon.
+   - Checkboxes: Firebase Auth, Supabase DB, Offline mode.
+   - Multi-select: Pages (Splash, Login, Home, Profile, Settings, Chat, etc.).
+   - Button: **"Generate My App"**.
+
+3. **Integration with Gemini API:**
+   - When "Generate My App" is clicked:
+     - Collect all form data.
+     - Build a structured prompt string for Gemini, for example:
+       ```
+       Create a complete Flutter project with the following:
+       - Description: [user input]
+       - Theme: [theme + color]
+       - Features: [selected checkboxes]
+       - Pages: [selected pages]
+       ```
+     - Send this prompt to Gemini API via `POST` request:
+       - Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=YOUR_API_KEY`
+       - Payload:
+         ```json
+         {
+           "contents": [{
+             "parts": [{
+               "text": "PROMPT_STRING_HERE"
+             }]
+           }]
+         }
+         ```
+     - Use `fetch` in Next.js API route (`/api/generate`) to securely call Gemini.
+     - Response should be displayed in the "Result" section.
+
+4. **Result Section:**
+   - Show loading spinner while waiting.
+   - Display the raw AI response (JSON / code) in a scrollable box.
+   - Button: **Download Flutter Project (ZIP)** (for now, just a placeholder until backend zips files).
+
+5. **Design:**
+   - Use Tailwind CSS with clean and modern styling.
+   - Responsive and professional look.
+
+6. **Tech Stack:**
+   - Next.js + Tailwind.
+   - API route: `/pages/api/generate.js` handles Gemini call.
+   - Client: `Dashboard.js` handles form + state + UI.
+   - Use functional components and React hooks.
+
+--- Goal ---
+Produce a working Dashboard where I can input a description, click "Generate", and see the Gemini response using my API key. Later I will extend it to automatically build and zip a Flutter project.
