@@ -652,11 +652,37 @@ const SidebarMenuSkeleton = React.forwardRef<
 >(({ className, showIcon = false, ...props }, ref) => {
   // Use fixed width to avoid hydration mismatches
   const [width, setWidth] = React.useState("75%");
+  const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
+    setIsMounted(true);
     // Set random width only on client side to avoid hydration mismatch
     setWidth(`${Math.floor(Math.random() * 40) + 50}%`);
   }, []);
+
+  if (!isMounted) {
+    // Return consistent server-side render
+    return (
+      <div
+        ref={ref}
+        data-sidebar="menu-skeleton"
+        className={cn("rounded-md h-8 flex gap-2 px-2 items-center", className)}
+        {...props}
+      >
+        {showIcon && (
+          <Skeleton
+            className="size-4 rounded-md"
+            data-sidebar="menu-skeleton-icon"
+          />
+        )}
+        <Skeleton
+          className="h-4 flex-1"
+          data-sidebar="menu-skeleton-text"
+          style={{ width: "75%" }}
+        />
+      </div>
+    )
+  }
 
   return (
     <div

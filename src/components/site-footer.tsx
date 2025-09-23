@@ -7,9 +7,11 @@ import { Logo } from "./logo";
 import { Button } from "./ui/button";
 
 export function SiteFooter() {
-  const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState<number>(2025);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     setCurrentYear(new Date().getFullYear());
   }, []);
   return (
@@ -41,7 +43,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-8 flex flex-col items-center justify-between border-t pt-6 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {currentYear || new Date().getFullYear()} Genius APPio. All rights reserved.
+            &copy; {currentYear} Genius APPio. All rights reserved.
           </p>
           <div className="mt-4 flex items-center space-x-2 sm:mt-0">
             <Button variant="ghost" size="icon" asChild>

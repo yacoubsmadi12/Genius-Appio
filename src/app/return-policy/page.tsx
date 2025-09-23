@@ -7,7 +7,7 @@ export default function ReturnPolicyPage() {
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold font-headline">Return &amp; Refund Policy</CardTitle>
-          <p className="text-muted-foreground pt-2">Last updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-muted-foreground pt-2">Last updated: September 23, 2025</p>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-96 w-full pr-4">
