@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, type ChangeEvent } from "react";
+import JSZip from "jszip";
 import { 
   Home, 
   FolderOpen, 
@@ -145,6 +146,38 @@ ${appConfig.pages.map(page => `- ${page} page`).join('\n')}
 - Include pubspec.yaml with all dependencies
 
 Please generate a complete, production-ready Flutter application that matches these specifications with beautiful design and smooth user experience.`;
+  };
+
+  const handleDownload = async () => {
+    if (!generatedResult || !generatedResult.files) {
+      alert('لا توجد ملفات للتحميل');
+      return;
+    }
+
+    try {
+      const zip = new JSZip();
+      
+      // إضافة كل ملف إلى الـ ZIP
+      generatedResult.files.forEach((file: any) => {
+        zip.file(file.path, file.content);
+      });
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      // إنشاء رابط التحميل
+      const element = document.createElement("a");
+      element.href = URL.createObjectURL(zipBlob);
+      element.download = `Flutter-Project-${Date.now()}.zip`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      
+      // تنظيف
+      URL.revokeObjectURL(element.href);
+    } catch (error) {
+      console.error("خطأ في إنشاء ملف ZIP:", error);
+      alert('حدث خطأ أثناء تحضير التحميل');
+    }
   };
 
   const generateApp = async () => {
@@ -445,9 +478,9 @@ Please generate a complete, production-ready Flutter application that matches th
                         </pre>
                       </div>
                       
-                      <Button className="w-full" variant="outline">
+                      <Button onClick={handleDownload} className="w-full" variant="outline">
                         <Download className="w-4 h-4 mr-2" />
-                        Download Flutter Project (ZIP)
+                        تحميل مشروع Flutter (ZIP)
                       </Button>
                     </div>
                   )}
