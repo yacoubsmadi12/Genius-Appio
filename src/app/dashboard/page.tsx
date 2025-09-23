@@ -251,12 +251,6 @@ Please generate a complete, production-ready Flutter application that matches th
       {/* Sidebar */}
       <div className="w-64 bg-background/80 backdrop-blur-sm shadow-lg border-r border-border/40">
         <div className="p-6">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xl font-bold text-foreground">Genius APPio</span>
-          </div>
           
           <nav className="space-y-2">
             {sidebarItems.map((item, index) => (
