@@ -13,7 +13,9 @@ import {
   Layers,
   Loader2,
   Download,
-  Sparkles
+  Sparkles,
+  Plus,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,18 +24,30 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+
+interface CustomPage {
+  name: string;
+  description: string;
+}
 
 interface AppConfig {
+  appName: string;
   description: string;
   theme: 'light' | 'dark' | 'custom';
-  primaryColor: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
   appIcon: File | null;
   features: {
-    firebaseAuth: boolean;
+    firebase: boolean;
     supabaseDb: boolean;
     offlineMode: boolean;
   };
   pages: string[];
+  customPages: CustomPage[];
 }
 
 const availablePages = [
@@ -57,16 +71,22 @@ const sidebarItems = [
 
 export default function DashboardPage() {
   const [appConfig, setAppConfig] = useState<AppConfig>({
+    appName: '',
     description: '',
     theme: 'light',
-    primaryColor: '#667EEA',
+    colors: {
+      primary: '#667EEA',
+      secondary: '#4F46E5',
+      accent: '#06B6D4'
+    },
     appIcon: null,
     features: {
-      firebaseAuth: false,
+      firebase: false,
       supabaseDb: false,
       offlineMode: false
     },
-    pages: ['Splash Screen', 'Home']
+    pages: ['Splash Screen', 'Home'],
+    customPages: []
   });
   
   const [isGenerating, setIsGenerating] = useState(false);
@@ -82,8 +102,14 @@ export default function DashboardPage() {
     setAppConfig(prev => ({ ...prev, theme }));
   };
 
-  const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAppConfig(prev => ({ ...prev, primaryColor: e.target.value }));
+  const handleColorChange = (colorType: 'primary' | 'secondary' | 'accent', value: string) => {
+    setAppConfig(prev => ({
+      ...prev,
+      colors: {
+        ...prev.colors,
+        [colorType]: value
+      }
+    }));
   };
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +127,28 @@ export default function DashboardPage() {
     }));
   };
 
+  const handleAppNameChange = (value: string) => {
+    setAppConfig(prev => ({ ...prev, appName: value }));
+  };
+
+  const handleCustomPageAdd = () => {
+    const pageName = prompt('Enter page name:');
+    const pageDescription = prompt('Describe this page:');
+    if (pageName && pageDescription) {
+      setAppConfig(prev => ({
+        ...prev,
+        customPages: [...prev.customPages, { name: pageName, description: pageDescription }]
+      }));
+    }
+  };
+
+  const handleCustomPageRemove = (index: number) => {
+    setAppConfig(prev => ({
+      ...prev,
+      customPages: prev.customPages.filter((_, i) => i !== index)
+    }));
+  };
+
   const handlePageToggle = (page: string) => {
     setAppConfig(prev => ({
       ...prev,
@@ -113,23 +161,33 @@ export default function DashboardPage() {
   const buildPrompt = (): string => {
     return `Create a complete, professional Flutter project with the following specifications:
 
+**App Name:** ${appConfig.appName}
+
 **App Description:** ${appConfig.description}
 
 **Design Requirements:**
 - Theme: ${appConfig.theme} theme
-- Primary Color: ${appConfig.primaryColor}
+- Primary Color: ${appConfig.colors.primary}
+- Secondary Color: ${appConfig.colors.secondary}  
+- Accent Color: ${appConfig.colors.accent}
 - Use Material 3 design system
 - Modern, beautiful UI with animations
 - Child-friendly and playful design
 - Smooth transitions and interactions
 
-**Features to Include:**
-${appConfig.features.firebaseAuth ? '- Firebase Authentication (login/register)' : ''}
-${appConfig.features.supabaseDb ? '- Supabase Database integration' : ''}
-${appConfig.features.offlineMode ? '- Offline mode capability' : ''}
+**App Icon:**
+${appConfig.appIcon ? `- Custom app icon provided (${appConfig.appIcon.name}) - integrate into assets/icons/ folder and reference in pubspec.yaml` : '- Generate default app icon and configure properly'}
 
-**Pages to Generate:**
-${appConfig.pages.map(page => `- ${page} page`).join('\n')}
+**Features to Include:**
+${appConfig.features.firebase ? '- Complete Firebase integration (authentication, firestore database, storage, analytics - set up all necessary configurations and link properly in the app)' : ''}
+${appConfig.features.supabaseDb ? '- Supabase Database integration with proper connection setup' : ''}
+${appConfig.features.offlineMode ? '- Offline mode capability with local storage' : ''}
+
+**Standard Pages to Generate:**
+${appConfig.pages.map(page => `- ${page} page (create fully functional page with proper navigation)`).join('\n')}
+
+**Custom Pages to Generate:**
+${appConfig.customPages.map(page => `- ${page.name} page: ${page.description} (implement this page according to the description with proper UI and functionality)`).join('\n')}
 
 **Technical Requirements:**
 - Complete Flutter project structure with lib/main.dart
@@ -291,6 +349,24 @@ Please generate a complete, production-ready Flutter application that matches th
             
             {/* App Builder Form */}
             <div className="space-y-6">
+              {/* App Name */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5" />
+                    App Name
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Input
+                    placeholder="Enter your app name (e.g., My Amazing App)"
+                    value={appConfig.appName}
+                    onChange={(e) => handleAppNameChange(e.target.value)}
+                    className="w-full"
+                  />
+                </CardContent>
+              </Card>
+
               {/* Description */}
               <Card>
                 <CardHeader>
@@ -332,18 +408,50 @@ Please generate a complete, production-ready Flutter application that matches th
                     </Select>
                   </div>
                   
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Primary Color</label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={appConfig.primaryColor}
-                        onChange={handleColorChange}
-                        className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer"
-                      />
-                      <span className="font-mono text-sm text-gray-600">
-                        {appConfig.primaryColor}
-                      </span>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Primary Color</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={appConfig.colors.primary}
+                          onChange={(e) => handleColorChange('primary', e.target.value)}
+                          className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                        />
+                        <span className="font-mono text-sm text-gray-600">
+                          {appConfig.colors.primary}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Secondary Color</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={appConfig.colors.secondary}
+                          onChange={(e) => handleColorChange('secondary', e.target.value)}
+                          className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                        />
+                        <span className="font-mono text-sm text-gray-600">
+                          {appConfig.colors.secondary}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Accent Color</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={appConfig.colors.accent}
+                          onChange={(e) => handleColorChange('accent', e.target.value)}
+                          className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                        />
+                        <span className="font-mono text-sm text-gray-600">
+                          {appConfig.colors.accent}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -387,11 +495,11 @@ Please generate a complete, production-ready Flutter application that matches th
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="firebase"
-                      checked={appConfig.features.firebaseAuth}
-                      onCheckedChange={() => handleFeatureToggle('firebaseAuth')}
+                      checked={appConfig.features.firebase}
+                      onCheckedChange={() => handleFeatureToggle('firebase')}
                     />
                     <label htmlFor="firebase" className="text-sm font-medium">
-                      Firebase Authentication
+                      Firebase (Authentication, Database, Storage)
                     </label>
                   </div>
                   
@@ -427,20 +535,67 @@ Please generate a complete, production-ready Flutter application that matches th
                     Pages to Include
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-3">
-                    {availablePages.map((page) => (
-                      <div key={page} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={page}
-                          checked={appConfig.pages.includes(page)}
-                          onCheckedChange={() => handlePageToggle(page)}
-                        />
-                        <label htmlFor={page} className="text-sm font-medium">
-                          {page}
-                        </label>
+                <CardContent className="space-y-4">
+                  {/* Predefined Pages */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-3">Standard Pages</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {availablePages.map((page) => (
+                        <div key={page} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={page}
+                            checked={appConfig.pages.includes(page)}
+                            onCheckedChange={() => handlePageToggle(page)}
+                          />
+                          <label htmlFor={page} className="text-sm font-medium">
+                            {page}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <Separator />
+                  
+                  {/* Custom Pages */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium">Custom Pages</h4>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCustomPageAdd}
+                        className="flex items-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Page
+                      </Button>
+                    </div>
+                    
+                    {appConfig.customPages.length > 0 ? (
+                      <div className="space-y-2">
+                        {appConfig.customPages.map((page, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex-1">
+                              <div className="font-medium text-sm">{page.name}</div>
+                              <div className="text-xs text-muted-foreground">{page.description}</div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCustomPageRemove(index)}
+                              className="ml-2"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">No custom pages added yet.</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -448,7 +603,7 @@ Please generate a complete, production-ready Flutter application that matches th
               {/* Generate Button */}
               <Button
                 onClick={generateApp}
-                disabled={isGenerating || !appConfig.description.trim()}
+                disabled={isGenerating || !appConfig.appName.trim() || !appConfig.description.trim()}
                 className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
               >
                 {isGenerating ? (

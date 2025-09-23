@@ -1,0 +1,15 @@
+As you know, the final Flutter app file looks like this: it contains all the exact files I need from you, for example, on the dashboard page.
+
+Above App Description
+* Select the "App Name" option. This will be sent with the final Gemnai ROM and will be edited in the appropriate location within the app's files. Let the user type it in.
+* App Description: This will also be included in the final promo that will be sent to Gemini. I suggest to the user that you can fully explain your app here.
+* Theme & Styling: Leave it as a theme with the option to add both dark and light, or choose the theme they want.
+* For the style of buttons or backgrounds within the app, give them the option to choose three colors and let them specify each color. This input information will be included in the final promo for Gemini.
+
+* App Icon: This should be stored in an assccet file within the app directly. Gemini should be informed that there is an image for the app in the file and named accordingly in the final promo.
+* Features: The existing options are suitable, but leave them as Firebase instead of Firebase Authentication. After the user selects the appropriate features, please send them with the promo and inform them that they must link everything appropriate to the app. If they choose Firebase, Gemini should be informed that they must link everything that is appropriate to the app from Firebase or Suba tools, as desired, within the app, with a mention in the file. Redmie: What should the user do within Firebase Console to properly link to the project and Firebase Console?
+
+* Pages to Include
+Here, when the user selects the page names they need, you should also allow them to add their own page name with whatever name they need and enter its promo for Gemini. If they select any page, you should include it in the final promo that will be sent to Gemini. It asks them to please create pages for the application... and make them suitable, etc.
+
+The final promo, I suggest, should include all of the entered information and send it. Then, as is the case now, when it's finished and everything is tested, I can download the entire project file as I attached, in addition to the modifications that will be included in the files.
