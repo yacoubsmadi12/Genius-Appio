@@ -641,7 +641,7 @@ export function PageBuilder({ project, page, onSave, onCancel }: PageBuilderProp
                 <CardContent>
                   {generatedPage ? (
                     <div className="space-y-2">
-                      {generatedPage.widgetStructure.split('\\n').map((widget, index) => (
+                      {generatedPage.widgetStructure?.split('\\n').map((widget, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <Badge variant="outline">{widget.trim()}</Badge>
                         </div>

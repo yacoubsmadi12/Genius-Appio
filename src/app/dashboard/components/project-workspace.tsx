@@ -18,7 +18,7 @@ import {
   Code,
   Palette
 } from "lucide-react";
-import type { Project, ProjectPage } from "../page";
+import type { Project, ProjectPage } from "@/types";
 import { PageBuilder } from "./page-builder";
 import { BackendConnection } from "./backend-connection";
 

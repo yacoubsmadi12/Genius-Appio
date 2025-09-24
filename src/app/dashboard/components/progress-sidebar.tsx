@@ -16,8 +16,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { generateAppFromPrompt } from "@/ai/flows";
 import type { GenerateAppFromPromptOutput } from "@/ai/flows";
-import type { AppPlan } from "@/types";
-import type { WorkflowStep } from "../page";
+import type { AppPlan, WorkflowStep } from "@/types";
 
 type ProgressSidebarProps = {
   currentStep: WorkflowStep;

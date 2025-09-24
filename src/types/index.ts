@@ -44,7 +44,7 @@ export interface Project {
   description: string;
   isBackendConnected: boolean;
   appName: string;
-  backend: 'firebase' | 'supabase' | 'custom' | null;
+  backend: 'firebase' | 'supabase' | 'nodejs' | 'custom' | null;
   pages: ProjectPage[];
   createdAt: Date;
   updatedAt: Date;
