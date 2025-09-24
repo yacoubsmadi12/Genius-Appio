@@ -17,7 +17,7 @@ import {
   Server,
   Cloud
 } from "lucide-react";
-import type { Project } from "../page";
+import type { Project } from "@/types";
 
 interface BackendConnectionProps {
   project: Project;

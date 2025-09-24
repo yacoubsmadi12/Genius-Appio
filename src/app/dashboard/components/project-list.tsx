@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Folder, Calendar, Settings, Eye, ExternalLink } from "lucide-react";
-import type { Project } from "../page";
+import type { Project } from "@/types";
 
 interface ProjectListProps {
   projects: Project[];

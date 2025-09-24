@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ChevronRight, ChevronLeft, Palette, Upload, CheckCircle, Sparkles } from "lucide-react";
 import Image from "next/image";
-import type { AppPlan } from "../page";
+import type { AppPlan } from "@/types";
 
 interface IconStepProps {
   appPlan: AppPlan;

@@ -35,7 +35,7 @@ import {
   Folder,
   File
 } from "lucide-react";
-import type { Project, ProjectPage } from "../page";
+import type { Project, ProjectPage } from "@/types";
 
 // Helper functions for Flutter code generation
 function generateSampleFlutterCode(name: string, description: string): string {

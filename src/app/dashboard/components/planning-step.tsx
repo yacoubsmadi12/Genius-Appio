@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ChevronRight, ChevronLeft, Bot, CheckCircle } from "lucide-react";
-import type { AppPlan } from "../page";
+import type { AppPlan } from "@/types";
 
 interface PlanningStepProps {
   onComplete: (plan: AppPlan) => void;

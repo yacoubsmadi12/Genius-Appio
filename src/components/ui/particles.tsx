@@ -35,7 +35,9 @@ export const ParticlesComponent = ({
             enable: true,
             mode: "repulse",
           },
-          resize: true,
+          resize: {
+            enable: true,
+          },
         },
         modes: {
           repulse: {

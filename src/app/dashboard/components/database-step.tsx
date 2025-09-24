@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ChevronRight, ChevronLeft, Database, CheckCircle } from "lucide-react";
-import type { AppPlan } from "../page";
+import type { AppPlan } from "@/types";
 
 interface DatabaseStepProps {
   appPlan: AppPlan;
